@@ -47,5 +47,5 @@
 
 /* Override injected styles */
 body {
-  @apply font-sans text-sm;
+  @apply font-sans text-sm bg-neutral-800 text-white;
 }
