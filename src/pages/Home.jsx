@@ -3,6 +3,8 @@ import { Link } from "react-router";
 import AppContainer from "../layouts/AppContainer";
 import AppIcon from "../assets/images/icon.svg";
 import EVMIcon from "../assets/images/evm.svg";
+import Number12Icon from "../assets/images/number-12.svg";
+import Number24Icon from "../assets/images/number-24.svg";
 import SolanaIcon from "../assets/images/solana.svg";
 import TONIcon from "../assets/images/ton.svg";
 import { cn } from "../lib/utils";
@@ -25,6 +27,18 @@ const generators = [
     icon: SolanaIcon,
     path: "/generator/solana",
     tags: ["SOL", "WIF", "PENGU"],
+  },
+  {
+    title: "12-Word Mnemonic Wallets",
+    icon: Number12Icon,
+    path: "/generator/12-word-mnemonic",
+    tags: ["Metamask", "Bitget Wallet"],
+  },
+  {
+    title: "24-Word Mnemonic Wallets",
+    icon: Number24Icon,
+    path: "/generator/24-word-mnemonic",
+    tags: ["Tonkeeper", "Phantom"],
   },
 ];
 
