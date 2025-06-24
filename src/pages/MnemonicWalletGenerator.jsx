@@ -9,7 +9,7 @@ export default function MnemonicWalletGenerator({ strength = 12 }) {
   return (
     <WalletsGenerator
       id={`${strength}-word-mnemonic`}
-      title={`${strength} Word Mnemonic Wallets`}
+      title={`${strength}-Word Mnemonic Wallets`}
       icon={strength === 12 ? Number12Icon : Number24Icon}
       generate={generateWallet}
     />
