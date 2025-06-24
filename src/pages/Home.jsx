@@ -9,19 +9,19 @@ import { cn } from "../lib/utils";
 
 const generators = [
   {
-    title: "EVM Wallet",
+    title: "EVM Wallets",
     icon: EVMIcon,
     path: "/generator/evm",
     tags: ["ETH", "BNB", "POL"],
   },
   {
-    title: "TON Wallet",
+    title: "TON Wallets",
     icon: TONIcon,
     path: "/generator/ton",
     tags: ["TON", "NOT", "DOGS"],
   },
   {
-    title: "Solana Wallet",
+    title: "Solana Wallets",
     icon: SolanaIcon,
     path: "/generator/solana",
     tags: ["SOL", "WIF", "PENGU"],
