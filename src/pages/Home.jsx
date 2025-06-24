@@ -74,9 +74,14 @@ export default function Home() {
   return (
     <AppContainer className="min-h-dvh justify-center gap-4 py-10">
       <img src={AppIcon} className="h-52 mx-auto" />
-      <h1 className="text-center text-4xl font-monoton">
-        {import.meta.env.VITE_APP_NAME}
-      </h1>
+      <div className="flex flex-col">
+        <h1 className="text-center text-4xl font-monoton">
+          {import.meta.env.VITE_APP_NAME}
+        </h1>
+        <p className="text-center text-neutral-300">
+          v{import.meta.env.PACKAGE_VERSION}
+        </p>
+      </div>
       <div className="flex flex-col gap-2">
         {generators.map((item, index) => (
           <PageLink key={index} {...item} />
