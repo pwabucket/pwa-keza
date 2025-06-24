@@ -1,4 +1,5 @@
 import toast from "react-hot-toast";
+import { csv2json } from "json-2-csv";
 import { useCallback } from "react";
 import { useDropzone } from "react-dropzone";
 
@@ -17,11 +18,19 @@ export default function Restore() {
 
       reader.addEventListener("load", (e) => {
         try {
-          const data = JSON.parse(e.target.result);
+          if (file.type === "text/csv") {
+            const data = csv2json(e.target.result, {
+              trimHeaderFields: true,
+              trimFieldValues: true,
+            });
 
-          setWallets(data);
+            setWallets(data);
+          } else {
+            const data = JSON.parse(e.target.result);
+            setWallets(data);
+          }
         } catch {
-          toast.error("Invalid JSON file!");
+          toast.error("Invalid Backup file!");
         }
       });
       reader.readAsText(file);
@@ -34,6 +43,7 @@ export default function Restore() {
     accept: {
       "application/json": [".json"],
       "text/plain": [".txt"],
+      "text/csv": [".csv"],
     },
     maxFiles: 1,
     multiple: false,

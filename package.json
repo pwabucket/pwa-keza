@@ -24,6 +24,7 @@
     "copy-to-clipboard": "^3.3.3",
     "ethers": "^6.14.4",
     "export-from-json": "^1.7.4",
+    "json-2-csv": "^5.5.9",
     "radix-ui": "^1.4.2",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
