@@ -97,7 +97,7 @@ export default function Home() {
         path={"/restore"}
         title={"Restore Wallets"}
         icon={RestoreIcon}
-        tags={["TXT", "JSON"]}
+        tags={["TXT", "JSON", "CSV"]}
       />
     </AppContainer>
   );
