@@ -26,12 +26,13 @@ export const WalletInfoContainer = ({
       <div className="flex shrink-0 gap-2">
         {/* Copy Button */}
         <button
+          title="Copy"
           onClick={() => copyToClipboard(JSON.stringify(wallet, null, 2))}
           className={cn("bg-neutral-600 p-2.5 rounded-xl")}
         >
           <IoCopyOutline className="size-4" />
         </button>
-        <DownloadButton fileName={fileName} data={[wallet]} />
+        <DownloadButton title="Download" fileName={fileName} data={[wallet]} />
       </div>
     </div>
     {Object.entries(wallet).map(([k, v], index) => (

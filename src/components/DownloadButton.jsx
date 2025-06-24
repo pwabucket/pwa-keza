@@ -8,6 +8,7 @@ export default function DownloadButton({ data, fileName, ...props }) {
   return (
     <Dialog.Root>
       <Dialog.Trigger
+        {...props}
         className={cn("bg-neutral-600 p-2.5 rounded-xl", props.className)}
       >
         <TiDownloadOutline className="size-4" />
