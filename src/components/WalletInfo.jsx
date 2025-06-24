@@ -14,8 +14,19 @@ export const WalletInfoContainer = ({ title, fileName, wallet, ...props }) => (
     )}
   >
     <div className="flex px-2 gap-4 items-center">
+      {/* Title */}
       <h1 className="text-lg font-bold grow min-w-0">{title}</h1>
-      <DownloadButton fileName={fileName} data={[wallet]} />
+
+      <div className="flex shrink-0 gap-2">
+        {/* Copy Button */}
+        <button
+          onClick={() => copyToClipboard(JSON.stringify(wallet, null, 2))}
+          className={cn("bg-neutral-600 p-2.5 rounded-xl")}
+        >
+          <IoCopyOutline className="size-4" />
+        </button>
+        <DownloadButton fileName={fileName} data={[wallet]} />
+      </div>
     </div>
     {Object.entries(wallet).map(([k, v], index) => (
       <WalletInfo key={index} title={k} value={v} />

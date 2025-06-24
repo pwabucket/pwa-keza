@@ -33,7 +33,7 @@ export default function WalletGeneratorInput({ generate, count, setCount }) {
 
       <button
         onClick={generate}
-        className="px-4 py-2 rounded-xl bg-yellow-500 text-black font-bold shrink-0"
+        className="px-4 py-2 rounded-xl bg-yellow-500 text-black shrink-0"
       >
         Generate
       </button>

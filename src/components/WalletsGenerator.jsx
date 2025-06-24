@@ -1,5 +1,6 @@
 import toast from "react-hot-toast";
 import { Dialog } from "radix-ui";
+import { IoCopyOutline } from "react-icons/io5";
 import { useCallback } from "react";
 
 import DownloadDialog from "./DownloadDialog";
@@ -7,7 +8,7 @@ import InnerAppLayout from "../layouts/InnerAppLayout";
 import WalletGeneratorInput from "../components/WalletGeneratorInput";
 import useWallets from "../hooks/useWallets";
 import { WalletInfoContainer } from "../components/WalletInfo";
-import { cn } from "../lib/utils";
+import { cn, copyToClipboard } from "../lib/utils";
 
 export default function WalletsGenerator({ id, icon, title, generate }) {
   const { count, wallets, setCount, setWallets } = useWallets();
@@ -36,18 +37,33 @@ export default function WalletsGenerator({ id, icon, title, generate }) {
 
       {wallets.length > 0 ? (
         <>
-          {/* Download Button */}
-          <Dialog.Root>
-            <Dialog.Trigger
-              className={cn("bg-yellow-500 text-black", "px-4 py-2 rounded-xl")}
+          <div className="flex gap-2">
+            {/* Download Button */}
+            <Dialog.Root>
+              <Dialog.Trigger
+                className={cn(
+                  "bg-yellow-500 text-black",
+                  "px-4 py-2 rounded-xl",
+                  "w-full"
+                )}
+              >
+                Download All
+              </Dialog.Trigger>
+              <DownloadDialog
+                fileName={`${id}-wallets-${Date.now()}`}
+                data={wallets}
+              />
+            </Dialog.Root>
+
+            {/* Copy Button */}
+            <button
+              title="Copy All"
+              onClick={() => copyToClipboard(JSON.stringify(wallets, null, 2))}
+              className={cn("bg-neutral-600 px-3 py-2 rounded-xl", "shrink-0")}
             >
-              Download All
-            </Dialog.Trigger>
-            <DownloadDialog
-              fileName={`${id}-wallets-${Date.now()}`}
-              data={wallets}
-            />
-          </Dialog.Root>
+              <IoCopyOutline className="size-4" />
+            </button>
+          </div>
           <div className="flex flex-col gap-4">
             {wallets.map((wallet, index) => (
               <WalletInfoContainer
