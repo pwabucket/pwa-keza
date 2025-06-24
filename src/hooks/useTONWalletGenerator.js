@@ -5,8 +5,8 @@ import { useCallback } from "react";
 
 export default function useTONWalletGenerator() {
   return useCallback(async () => {
-    let mnemonics = await mnemonicNew();
-    let keyPair = await mnemonicToPrivateKey(mnemonics);
+    let mnemonic = await mnemonicNew();
+    let keyPair = await mnemonicToPrivateKey(mnemonic);
 
     let workchain = 0;
     let walletV4 = WalletContractV4.create({
@@ -33,7 +33,7 @@ export default function useTONWalletGenerator() {
       ["Address V4"]: addressV4,
       ["Public Key"]: Buffer.from(keyPair.publicKey).toString("hex"),
       ["Secret Key"]: Buffer.from(keyPair.secretKey).toString("hex"),
-      ["Phrase"]: mnemonics.join(" "),
+      ["Phrase"]: mnemonic.join(" "),
     };
   }, []);
 }
