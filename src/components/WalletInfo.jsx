@@ -21,7 +21,7 @@ export const WalletInfoContainer = ({
   >
     <div className="flex px-2 gap-4 items-center">
       {/* Title */}
-      <h1 className="text-lg font-bold grow min-w-0">{title}</h1>
+      <h1 className="text-lg font-extralight grow min-w-0">{title}</h1>
 
       <div className="flex shrink-0 gap-2">
         {/* Copy Button */}
