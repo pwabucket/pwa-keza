@@ -44,7 +44,7 @@ const generators = [
 
 export default function Home() {
   return (
-    <AppContainer className="h-dvh justify-center gap-4">
+    <AppContainer className="min-h-dvh justify-center gap-4 py-10">
       <img src={AppIcon} className="h-52 mx-auto" />
       <h1 className="text-center text-4xl font-monoton">
         {import.meta.env.VITE_APP_NAME}
