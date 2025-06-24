@@ -1,7 +1,12 @@
 import toast from "react-hot-toast";
 import { Dialog } from "radix-ui";
-import { IoCopyOutline } from "react-icons/io5";
+import {
+  IoChevronDownOutline,
+  IoChevronUpOutline,
+  IoCopyOutline,
+} from "react-icons/io5";
 import { useCallback } from "react";
+import { useState } from "react";
 
 import DownloadDialog from "./DownloadDialog";
 import InnerAppLayout from "../layouts/InnerAppLayout";
@@ -11,6 +16,7 @@ import { WalletInfoContainer } from "../components/WalletInfo";
 import { cn, copyToClipboard } from "../lib/utils";
 
 export default function WalletsGenerator({ id, icon, title, generate }) {
+  const [expanded, setExpanded] = useState(false);
   const { count, wallets, setCount, setWallets } = useWallets();
 
   const generateWallets = useCallback(async () => {
@@ -55,6 +61,19 @@ export default function WalletsGenerator({ id, icon, title, generate }) {
               />
             </Dialog.Root>
 
+            {/* Expand Button */}
+            <button
+              title="Toggle Expansion"
+              onClick={() => setExpanded((prev) => !prev)}
+              className={cn("bg-neutral-600 px-3 py-2 rounded-xl", "shrink-0")}
+            >
+              {expanded ? (
+                <IoChevronUpOutline className="size-4" />
+              ) : (
+                <IoChevronDownOutline className="size-4" />
+              )}
+            </button>
+
             {/* Copy Button */}
             <button
               title="Copy All"
@@ -71,6 +90,7 @@ export default function WalletsGenerator({ id, icon, title, generate }) {
                 title={`Wallet ${index + 1}`}
                 fileName={`${id}-wallet-${Date.now()}-${index + 1}`}
                 wallet={wallet}
+                expanded={expanded}
               />
             ))}
           </div>

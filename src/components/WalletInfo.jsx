@@ -3,7 +3,13 @@ import { IoCopyOutline } from "react-icons/io5";
 import DownloadButton from "./DownloadButton";
 import { cn, copyToClipboard } from "../lib/utils";
 
-export const WalletInfoContainer = ({ title, fileName, wallet, ...props }) => (
+export const WalletInfoContainer = ({
+  expanded,
+  title,
+  fileName,
+  wallet,
+  ...props
+}) => (
   <div
     {...props}
     className={cn(
@@ -29,16 +35,23 @@ export const WalletInfoContainer = ({ title, fileName, wallet, ...props }) => (
       </div>
     </div>
     {Object.entries(wallet).map(([k, v], index) => (
-      <WalletInfo key={index} title={k} value={v} />
+      <WalletInfo key={index} title={k} value={v} expanded={expanded} />
     ))}
   </div>
 );
 
-export const WalletInfo = ({ title, value }) => (
+export const WalletInfo = ({ expanded, title, value }) => (
   <div className="flex gap-4 p-4 bg-neutral-600 rounded-xl">
     <div className="flex flex-col grow min-w-0 min-h-0">
       <h2 className="text-neutral-400 font-bold text-xs">{title}</h2>
-      <p className="truncate font-bold font-mono">{value}</p>
+      <p
+        className={cn(
+          "font-bold font-mono",
+          expanded ? "break-words" : "truncate"
+        )}
+      >
+        {value}
+      </p>
     </div>
     <button className="shrink-0" onClick={() => copyToClipboard(value)}>
       <IoCopyOutline className="size-4" />
