@@ -7,6 +7,7 @@ import Number12Icon from "../assets/images/number-12.svg";
 import Number24Icon from "../assets/images/number-24.svg";
 import RestoreIcon from "../assets/images/restore.svg";
 import SolanaIcon from "../assets/images/solana.svg";
+import StellarIcon from "../assets/images/stellar.svg";
 import TONIcon from "../assets/images/ton.svg";
 import { cn } from "../lib/utils";
 
@@ -28,6 +29,12 @@ const generators = [
     icon: SolanaIcon,
     path: "/generator/solana",
     tags: ["SOL", "WIF", "PENGU"],
+  },
+  {
+    title: "Stellar Wallets",
+    icon: StellarIcon,
+    path: "/generator/stellar",
+    tags: ["XLM", "SSLX", "USDC"],
   },
   {
     title: "12-Word Mnemonic Wallets",

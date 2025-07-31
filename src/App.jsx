@@ -6,6 +6,7 @@ import Home from "./pages/Home";
 import MnemonicWalletGenerator from "./pages/MnemonicWalletGenerator";
 import Restore from "./pages/Restore";
 import SolanaWalletGenerator from "./pages/SolanaWalletGenerator";
+import StellarWalletGenerator from "./pages/StellarWalletGenerator";
 import TONWalletGenerator from "./pages/TONWalletGenerator";
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path="evm" element={<EVMWalletGenerator />} />
           <Route path="ton" element={<TONWalletGenerator />} />
           <Route path="solana" element={<SolanaWalletGenerator />} />
+          <Route path="stellar" element={<StellarWalletGenerator />} />
           <Route
             path="12-word-mnemonic"
             element={<MnemonicWalletGenerator strength={12} />}
