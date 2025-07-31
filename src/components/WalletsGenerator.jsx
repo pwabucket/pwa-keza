@@ -49,7 +49,7 @@ export default function WalletsGenerator({
           setExpanded={setExpanded}
         />
       ) : (
-        <p className="italic text-center">Click generate to start...</p>
+        <p className="italic text-center p-4">Click generate to start...</p>
       )}
     </InnerAppLayout>
   );
