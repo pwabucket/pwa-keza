@@ -14,17 +14,25 @@
      id="defs2" />
   <title
      id="title1">Asset 1</title>
+  <metadata
+     id="metadata2">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>Asset 1</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <circle
+     style="fill:#ffffff;stroke-width:1.35746"
+     id="path3"
+     cx="256"
+     cy="256"
+     r="256" />
   <g
      id="Layer_2"
      data-name="Layer 2"
-     transform="translate(109.66438,85.271393)">
-    <rect
-       style="fill:#ffffff;stroke-width:1.31661"
-       id="rect2"
-       width="512"
-       height="512"
-       x="-109.66438"
-       y="-85.271393" />
+     transform="translate(109.66439,85.271398)">
     <g
        id="Layer_1-2"
        data-name="Layer 1"
@@ -37,13 +45,4 @@
          id="path2" />
     </g>
   </g>
-  <metadata
-     id="metadata2">
-    <rdf:RDF>
-      <cc:Work
-         rdf:about="">
-        <dc:title>Asset 1</dc:title>
-      </cc:Work>
-    </rdf:RDF>
-  </metadata>
 </svg>
