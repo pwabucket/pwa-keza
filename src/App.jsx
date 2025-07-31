@@ -4,10 +4,12 @@ import { Toaster } from "react-hot-toast";
 import EVMWalletGenerator from "./pages/EVMWalletGenerator";
 import Home from "./pages/Home";
 import MnemonicWalletGenerator from "./pages/MnemonicWalletGenerator";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Restore from "./pages/Restore";
 import SolanaWalletGenerator from "./pages/SolanaWalletGenerator";
 import StellarWalletGenerator from "./pages/StellarWalletGenerator";
 import TONWalletGenerator from "./pages/TONWalletGenerator";
+import TermsOfUse from "./pages/TermsOfUse";
 
 function App() {
   return (
@@ -29,6 +31,11 @@ function App() {
             element={<MnemonicWalletGenerator strength={24} />}
           />
         </Route>
+        {/* Privacy Policy */}
+        <Route path="privacy-policy" element={<PrivacyPolicy />} />
+
+        {/* Terms of Use*/}
+        <Route path="terms-of-use" element={<TermsOfUse />} />
       </Routes>
       <Toaster />
     </>

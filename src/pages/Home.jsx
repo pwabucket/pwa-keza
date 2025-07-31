@@ -77,6 +77,34 @@ const PageLink = ({ path, title, icon, tags }) => (
   </Link>
 );
 
+const FooterLink = ({ className, ...props }) => (
+  <div className={cn("basis-0 grow", className)}>
+    <Link {...props} />
+  </div>
+);
+
+const FooterLinks = () => {
+  return (
+    <div className="flex flex-col gap-2 py-2">
+      <div className="flex justify-center gap-2 text-yellow-400">
+        <FooterLink to="/privacy-policy" className={"text-right"}>
+          Privacy Policy
+        </FooterLink>
+        <span className="w-px  bg-neutral-600 " />
+        <FooterLink to="/terms-of-use">Terms of Use</FooterLink>
+      </div>
+
+      <div className="flex justify-center gap-2 text-yellow-400">
+        <div>
+          <FooterLink to={import.meta.env.VITE_APP_REPOSITORY} target="_blank">
+            Source Codes
+          </FooterLink>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export default function Home() {
   return (
     <AppContainer className="min-h-dvh justify-center gap-4 py-10">
@@ -111,6 +139,8 @@ export default function Home() {
         icon={RestoreIcon}
         tags={["TXT", "JSON", "CSV"]}
       />
+
+      <FooterLinks />
     </AppContainer>
   );
 }
