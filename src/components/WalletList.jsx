@@ -13,7 +13,7 @@ import { cn, copyToClipboard } from "../lib/utils";
 export default function WalletList({ id, wallets, expanded, setExpanded }) {
   return (
     <>
-      <div className="flex gap-2">
+      <div className="flex gap-2 sticky top-12 z-30 bg-neutral-800 p-4 -mx-4">
         {/* Download Button */}
         <Dialog.Root>
           <Dialog.Trigger

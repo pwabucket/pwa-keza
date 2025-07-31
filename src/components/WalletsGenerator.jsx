@@ -34,7 +34,6 @@ export default function WalletsGenerator({
           <h1 className="font-bold">{title}</h1>
         </div>
       }
-      className="gap-4"
     >
       <WalletGeneratorInput
         count={count}
