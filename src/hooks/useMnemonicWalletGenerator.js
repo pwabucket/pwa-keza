@@ -1,12 +1,13 @@
-import { generateMnemonic } from "bip39";
 import { useCallback } from "react";
 
-export default function useMnemonicWalletGenerator(strength = 12) {
-  return useCallback(async () => {
-    let mnemonic = generateMnemonic(strength === 12 ? 128 : 256);
+import MnemonicWorker from "../workers/MnemonicWorker?worker";
+import useWalletWorker from "./useWalletWorker";
 
-    return {
-      ["Phrase"]: mnemonic,
-    };
-  }, [strength]);
+export default function useMnemonicWalletGenerator(strength = 12) {
+  const generate = useWalletWorker(MnemonicWorker);
+
+  return useCallback(
+    (count) => generate(count, strength),
+    [strength, generate]
+  );
 }

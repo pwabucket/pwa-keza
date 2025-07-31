@@ -4,6 +4,7 @@ import {
   IoChevronUpOutline,
   IoCopyOutline,
 } from "react-icons/io5";
+import { Virtuoso } from "react-virtuoso";
 
 import DownloadDialog from "./DownloadDialog";
 import { WalletInfoContainer } from "../components/WalletInfo";
@@ -52,16 +53,21 @@ export default function WalletList({ id, wallets, expanded, setExpanded }) {
           <IoCopyOutline className="size-4" />
         </button>
       </div>
-      <div className="flex flex-col gap-4">
-        {wallets.map((wallet, index) => (
-          <WalletInfoContainer
-            key={index}
-            title={`Wallet ${index + 1}`}
-            fileName={`${id}-wallet-${Date.now()}-${index + 1}`}
-            wallet={wallet}
-            expanded={expanded}
-          />
-        ))}
+      <div className="flex flex-col">
+        <Virtuoso
+          useWindowScroll
+          data={wallets}
+          itemContent={(index, wallet) => (
+            <div className="pb-4">
+              <WalletInfoContainer
+                title={`Wallet ${index + 1}`}
+                fileName={`${id}-wallet-${Date.now()}-${index + 1}`}
+                wallet={wallet}
+                expanded={expanded}
+              />
+            </div>
+          )}
+        />
       </div>
     </>
   );

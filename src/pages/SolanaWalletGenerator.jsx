@@ -11,6 +11,7 @@ export default function SolanaWalletGenerator() {
       title="Solana Wallets"
       icon={SolanaIcon}
       generate={generateSolanaWallet}
+      defaultExpanded
     />
   );
 }

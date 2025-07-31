@@ -12,7 +12,7 @@ export default function useNavigateBack() {
      * @returns
      */
     (options) => {
-      return navigate(location.key !== "default" ? -1 : "/", options);
+      return location.key !== "default" ? navigate(-1) : navigate("/", options);
     },
     [location, navigate]
   );

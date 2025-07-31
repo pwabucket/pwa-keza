@@ -1,14 +1,5 @@
-import { Wallet } from "ethers";
-import { useCallback } from "react";
-
+import EVMWorker from "../workers/EVMWorker?worker";
+import useWalletWorker from "./useWalletWorker";
 export default function useEVMWalletGenerator() {
-  return useCallback(async () => {
-    const wallet = Wallet.createRandom();
-    return {
-      ["Address"]: wallet.address,
-      ["Public Key"]: wallet.publicKey,
-      ["Private Key"]: wallet.privateKey,
-      ["Phrase"]: wallet.mnemonic.phrase,
-    };
-  }, []);
+  return useWalletWorker(EVMWorker);
 }

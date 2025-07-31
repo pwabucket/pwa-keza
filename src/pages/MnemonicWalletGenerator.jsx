@@ -12,6 +12,7 @@ export default function MnemonicWalletGenerator({ strength = 12 }) {
       title={`${strength}-Word Mnemonic Wallets`}
       icon={strength === 12 ? Number12Icon : Number24Icon}
       generate={generateWallet}
+      defaultExpanded
     />
   );
 }

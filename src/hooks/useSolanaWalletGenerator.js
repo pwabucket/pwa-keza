@@ -1,14 +1,6 @@
-import { Buffer } from "buffer";
-import { Keypair } from "@solana/web3.js";
-import { useCallback } from "react";
+import useWalletWorker from "./useWalletWorker";
+import SolanaWorker from "../workers/SolanaWorker?worker";
 
 export default function useSolanaWalletGenerator() {
-  return useCallback(async () => {
-    const key = Keypair.generate();
-
-    return {
-      ["Address"]: key.publicKey.toBase58(),
-      ["Secret Key"]: Buffer.from(key.secretKey).toString("hex"),
-    };
-  }, []);
+  return useWalletWorker(SolanaWorker);
 }
