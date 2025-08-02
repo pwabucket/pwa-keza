@@ -1,6 +1,9 @@
+import { Dialog } from "radix-ui";
 import { IoCopyOutline } from "react-icons/io5";
+import { LuQrCode } from "react-icons/lu";
 
 import DownloadButton from "./DownloadButton";
+import QRCodeDialog from "./QRCodeDialog";
 import { cn, copyToClipboard } from "../lib/utils";
 
 type WalletInfoContainerProps = {
@@ -9,6 +12,13 @@ type WalletInfoContainerProps = {
   fileName: string;
   wallet: Record<string, string>;
 } & React.ComponentProps<"div">;
+
+const WalletInfoButton = (props: React.ComponentProps<"button">) => (
+  <button
+    {...props}
+    className={cn("bg-neutral-500 p-2 rounded-lg", props.className)}
+  />
+);
 
 export const WalletInfoContainer = ({
   expanded,
@@ -69,8 +79,21 @@ export const WalletInfo = ({
         {value}
       </p>
     </div>
-    <button className="shrink-0" onClick={() => copyToClipboard(value)}>
-      <IoCopyOutline className="size-4" />
-    </button>
+    <div className="flex items-center gap-1 shrink-0">
+      <Dialog.Root>
+        <Dialog.Trigger asChild>
+          <WalletInfoButton>
+            <LuQrCode className="size-4" />
+          </WalletInfoButton>
+        </Dialog.Trigger>
+        <QRCodeDialog title={title} content={value} />
+      </Dialog.Root>
+      <WalletInfoButton
+        className="shrink-0"
+        onClick={() => copyToClipboard(value)}
+      >
+        <IoCopyOutline className="size-4" />
+      </WalletInfoButton>
+    </div>
   </div>
 );

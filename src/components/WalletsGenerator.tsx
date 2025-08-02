@@ -12,7 +12,7 @@ type WalletsGeneratorProps = {
   title: string;
   generate: (
     count: number,
-    ...args: any[]
+    ...args: unknown[]
   ) => Promise<Record<string, string>[]>;
   defaultExpanded?: boolean;
 };
