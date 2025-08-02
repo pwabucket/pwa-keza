@@ -77,5 +77,12 @@ export default defineConfig(({ mode }) => {
       tailwindcss(),
       react(),
     ],
+
+    worker: {
+      format: "es",
+      plugins() {
+        return [wasm(), topLevelAwait()];
+      },
+    },
   };
 });
