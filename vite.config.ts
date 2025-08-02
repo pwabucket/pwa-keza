@@ -1,13 +1,13 @@
 import process from "process";
 import react from "@vitejs/plugin-react-swc";
 import tailwindcss from "@tailwindcss/vite";
+import topLevelAwait from "vite-plugin-top-level-await";
 import version from "vite-plugin-package-version";
 import wasm from "vite-plugin-wasm";
 import { ViteEjsPlugin } from "vite-plugin-ejs";
 import { VitePWA } from "vite-plugin-pwa";
 import { defineConfig } from "vite";
 import { loadEnv } from "vite";
-
 // https://vite.dev/config/
 export default defineConfig(({ mode }) => {
   /** Env */
@@ -18,6 +18,7 @@ export default defineConfig(({ mode }) => {
       /** Plugins */
       version(),
       wasm(),
+      topLevelAwait(),
       VitePWA({
         registerType: "autoUpdate",
         workbox: {
