@@ -37,7 +37,7 @@ export default function QRCodeDialog({
           <div className="mx-auto p-2.5 rounded-lg bg-white">
             <QRCodeSVG
               value={content}
-              title={"Donate"}
+              title={title}
               level={"M"}
               size={192}
               imageSettings={{
