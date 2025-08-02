@@ -7,7 +7,7 @@ export default function useMnemonicWalletGenerator(strength = 12) {
   const generate = useWalletWorker(MnemonicWorker);
 
   return useCallback(
-    (count) => generate(count, strength),
+    (count: number) => generate(count, strength),
     [strength, generate]
   );
 }

@@ -1,13 +1,19 @@
 import { HiOutlineArrowLeft } from "react-icons/hi2";
 
 import useNavigateBack from "../hooks/useNavigateBack";
+import type { DynamicComponentProps } from "../types/types";
 import { cn } from "../lib/utils";
 
 export function HeaderButton({
-  as: Component = "button", // eslint-disable-line no-unused-vars
-  icon: Icon, // eslint-disable-line no-unused-vars
+  as,
+  icon,
   ...props
+}: DynamicComponentProps<"button"> & {
+  icon: React.ElementType;
 }) {
+  const Component = as || "button";
+  const Icon = icon;
+
   return (
     <Component
       {...props}
@@ -23,7 +29,9 @@ export function HeaderButton({
   );
 }
 
-export function HeaderReturnButton(props) {
+export function HeaderReturnButton(
+  props: Omit<React.ComponentProps<typeof HeaderButton>, "icon">
+) {
   const navigateBack = useNavigateBack();
 
   return (

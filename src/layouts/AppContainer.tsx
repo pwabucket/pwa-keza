@@ -1,6 +1,6 @@
 import { cn } from "../lib/utils";
 
-export default function AppContainer(props) {
+export default function AppContainer(props: React.ComponentProps<"div">) {
   return (
     <div
       {...props}

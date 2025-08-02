@@ -3,7 +3,13 @@ import { HiOutlineChevronLeft, HiOutlineChevronRight } from "react-icons/hi2";
 import Input from "./Input";
 import { cn } from "../lib/utils";
 
-const NumberInputButton = (props) => (
+type WalletGeneratorInputProps = {
+  generate: () => void;
+  count: string | number;
+  setCount: React.Dispatch<React.SetStateAction<string | number>>;
+};
+
+const NumberInputButton = (props: React.ComponentProps<"button">) => (
   <button
     {...props}
     className={cn(
@@ -14,7 +20,11 @@ const NumberInputButton = (props) => (
   />
 );
 
-export default function WalletGeneratorInput({ generate, count, setCount }) {
+export default function WalletGeneratorInput({
+  generate,
+  count,
+  setCount,
+}: WalletGeneratorInputProps) {
   return (
     <div className="flex gap-2">
       <Input
@@ -23,10 +33,14 @@ export default function WalletGeneratorInput({ generate, count, setCount }) {
         onChange={(ev) => setCount(ev.target.value)}
       />
       <div className="flex gap-1 shrink-0">
-        <NumberInputButton onClick={() => setCount(parseInt(count) - 1)}>
+        <NumberInputButton
+          onClick={() => setCount(parseInt(count as string) - 1)}
+        >
           <HiOutlineChevronLeft className="size-4 stroke-3" />
         </NumberInputButton>
-        <NumberInputButton onClick={() => setCount(parseInt(count) + 1)}>
+        <NumberInputButton
+          onClick={() => setCount(parseInt(count as string) + 1)}
+        >
           <HiOutlineChevronRight className="size-4 stroke-3" />
         </NumberInputButton>
       </div>

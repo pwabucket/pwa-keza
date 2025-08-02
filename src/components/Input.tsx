@@ -2,7 +2,7 @@ import { memo } from "react";
 
 import { cn } from "../lib/utils";
 
-export default memo(function Input(props) {
+export default memo(function Input(props: React.ComponentProps<"input">) {
   return (
     <input
       {...props}

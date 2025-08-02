@@ -1,5 +1,6 @@
-import { createWalletWorker } from "./createWalletWorker";
 import { Wallet } from "ethers";
+
+import { createWalletWorker } from "./createWalletWorker";
 
 createWalletWorker(async () => {
   const wallet = Wallet.createRandom();
@@ -7,6 +8,6 @@ createWalletWorker(async () => {
     ["Address"]: wallet.address,
     ["Public Key"]: wallet.publicKey,
     ["Private Key"]: wallet.privateKey,
-    ["Phrase"]: wallet.mnemonic.phrase,
+    ["Phrase"]: wallet.mnemonic?.phrase,
   };
 });

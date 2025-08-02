@@ -4,7 +4,16 @@ import { TiDownloadOutline } from "react-icons/ti";
 import DownloadDialog from "./DownloadDialog";
 import { cn } from "../lib/utils";
 
-export default function DownloadButton({ data, fileName, ...props }) {
+type DownloadButtonProps = {
+  data: Record<string, string>[];
+  fileName?: string;
+} & React.ComponentProps<typeof Dialog.Trigger>;
+
+export default function DownloadButton({
+  data,
+  fileName,
+  ...props
+}: DownloadButtonProps) {
   return (
     <Dialog.Root>
       <Dialog.Trigger

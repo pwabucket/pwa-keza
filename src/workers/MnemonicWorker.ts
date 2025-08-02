@@ -1,4 +1,4 @@
-import "../lib/polyfill.js";
+import "../lib/polyfill.ts";
 
 import { generateMnemonic } from "bip39";
 

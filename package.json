@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "vite build",
+    "build": "tsc -b && vite build",
     "lint": "eslint .",
     "preview": "vite preview",
     "generate-pwa-assets": "pwa-assets-generator"
@@ -13,7 +13,7 @@
   "dependencies": {
     "@fontsource/monoton": "^5.2.6",
     "@fontsource/noto-sans": "^5.2.7",
-    "@solana/web3.js": "^1.98.2",
+    "@solana/web3.js": "^1.98.4",
     "@stellar/stellar-sdk": "^13.3.0",
     "@tailwindcss/vite": "^4.1.11",
     "@ton/core": "^0.61.0",
@@ -38,22 +38,25 @@
     "react-virtuoso": "^4.13.0",
     "repeat-element": "^1.1.4",
     "tailwind-merge": "^3.3.1",
-    "tailwindcss": "^4.1.11",
-    "vite-plugin-package-version": "^1.1.0"
+    "tailwindcss": "^4.1.11"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
     "@tailwindcss/typography": "^0.5.16",
     "@types/react": "^19.1.9",
     "@types/react-dom": "^19.1.7",
+    "@types/repeat-element": "^1.1.3",
     "@vite-pwa/assets-generator": "^1.0.0",
     "@vitejs/plugin-react-swc": "^3.11.0",
     "eslint": "^9.32.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "eslint-plugin-react-refresh": "^0.4.20",
     "globals": "^16.3.0",
+    "typescript": "~5.8.3",
+    "typescript-eslint": "^8.38.0",
     "vite": "^7.0.6",
     "vite-plugin-ejs": "^1.7.0",
+    "vite-plugin-package-version": "^1.1.0",
     "vite-plugin-pwa": "^1.0.2",
     "workbox-window": "^7.3.0"
   }

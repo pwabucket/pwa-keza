@@ -3,13 +3,20 @@ import { IoCopyOutline } from "react-icons/io5";
 import DownloadButton from "./DownloadButton";
 import { cn, copyToClipboard } from "../lib/utils";
 
+type WalletInfoContainerProps = {
+  expanded: boolean;
+  title: string;
+  fileName: string;
+  wallet: Record<string, string>;
+} & React.ComponentProps<"div">;
+
 export const WalletInfoContainer = ({
   expanded,
   title,
   fileName,
   wallet,
   ...props
-}) => (
+}: WalletInfoContainerProps) => (
   <div
     {...props}
     className={cn(
@@ -41,7 +48,15 @@ export const WalletInfoContainer = ({
   </div>
 );
 
-export const WalletInfo = ({ expanded, title, value }) => (
+export const WalletInfo = ({
+  expanded,
+  title,
+  value,
+}: {
+  expanded: boolean;
+  title: string;
+  value: string;
+}) => (
   <div className="flex gap-4 p-4 bg-neutral-600 rounded-xl">
     <div className="flex flex-col grow min-w-0 min-h-0">
       <h2 className="text-neutral-400 font-bold text-xs">{title}</h2>

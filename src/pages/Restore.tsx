@@ -12,21 +12,25 @@ import { cn } from "../lib/utils";
 export default function Restore() {
   const { wallets, expanded, setWallets, setExpanded } = useWallets();
   const onDrop = useCallback(
-    (acceptedFiles) => {
+    (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
       const reader = new FileReader();
 
       reader.addEventListener("load", (e) => {
         try {
           if (file.type === "text/csv") {
-            const data = csv2json(e.target.result, {
+            const data = csv2json(e.target?.result as string, {
               trimHeaderFields: true,
               trimFieldValues: true,
-            });
+            }) as Record<string, string>[];
 
             setWallets(data);
           } else {
-            const data = JSON.parse(e.target.result);
+            const data = JSON.parse(e.target?.result as string) as Record<
+              string,
+              string
+            >[];
+
             setWallets(data);
           }
         } catch {

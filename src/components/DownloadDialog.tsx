@@ -1,12 +1,18 @@
-import exportFromJSON from "export-from-json";
+import exportFromJSON, { type ExportType } from "export-from-json";
 import { Dialog } from "radix-ui";
 import { useCallback } from "react";
 
 import { cn } from "../lib/utils";
 
-export default function DownloadDialog({ data, fileName }) {
+export default function DownloadDialog({
+  data,
+  fileName,
+}: {
+  data: Record<string, string>[];
+  fileName?: string;
+}) {
   const download = useCallback(
-    (exportType) => {
+    (exportType: ExportType) => {
       exportFromJSON({
         data,
         fileName,

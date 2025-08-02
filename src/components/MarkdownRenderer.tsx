@@ -2,7 +2,7 @@ import Markdown from "react-markdown";
 
 import { cn } from "../lib/utils";
 
-export default function MarkdownRender({ content }) {
+export default function MarkdownRender({ content }: { content: string }) {
   return (
     <div
       className={cn(

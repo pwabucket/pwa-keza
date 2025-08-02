@@ -6,19 +6,30 @@ import WalletGeneratorInput from "../components/WalletGeneratorInput";
 import WalletList from "./WalletList";
 import useWallets from "../hooks/useWallets";
 
+type WalletsGeneratorProps = {
+  id: string;
+  icon: string;
+  title: string;
+  generate: (
+    count: number,
+    ...args: any[]
+  ) => Promise<Record<string, string>[]>;
+  defaultExpanded?: boolean;
+};
+
 export default function WalletsGenerator({
   id,
   icon,
   title,
   generate,
   defaultExpanded = false,
-}) {
+}: WalletsGeneratorProps) {
   const { count, wallets, expanded, setExpanded, setCount, setWallets } =
     useWallets(defaultExpanded);
 
   const generateWallets = useCallback(async () => {
     setWallets(
-      await toast.promise(generate(count), {
+      await toast.promise(generate(count as number), {
         loading: "Generating...",
         success: "Generated successfully!",
         error: (err) => `Error: ${err.message || err}`,

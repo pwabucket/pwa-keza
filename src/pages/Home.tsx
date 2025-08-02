@@ -50,7 +50,17 @@ const generators = [
   },
 ];
 
-const PageLink = ({ path, title, icon, tags }) => (
+const PageLink = ({
+  path,
+  title,
+  icon,
+  tags,
+}: {
+  path: string;
+  title: string;
+  icon: string;
+  tags: string[];
+}) => (
   <Link
     to={path}
     className={cn(
@@ -77,7 +87,10 @@ const PageLink = ({ path, title, icon, tags }) => (
   </Link>
 );
 
-const FooterLink = ({ className, ...props }) => (
+const FooterLink = ({
+  className,
+  ...props
+}: React.ComponentProps<typeof Link>) => (
   <div className={cn("basis-0 grow", className)}>
     <Link {...props} />
   </div>

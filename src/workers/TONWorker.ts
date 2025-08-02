@@ -1,4 +1,4 @@
-import "../lib/polyfill.js";
+import "../lib/polyfill.ts";
 
 import { Buffer } from "buffer";
 import { WalletContractV4, WalletContractV5R1 } from "@ton/ton";

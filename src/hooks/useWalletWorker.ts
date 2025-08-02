@@ -2,17 +2,19 @@ import * as Comlink from "comlink";
 import { useCallback, useEffect, useRef } from "react";
 
 export default function useWalletWorker(
-  WorkerClass,
+  WorkerClass: new () => Worker,
   poolSize = navigator.hardwareConcurrency || 4
 ) {
-  const workersRef = useRef([]);
+  const workersRef = useRef<{ worker: Worker; api: any }[]>([]);
 
   useEffect(() => {
     const pool = [];
 
     for (let i = 0; i < poolSize; i++) {
       const worker = new WorkerClass();
-      const api = Comlink.wrap(worker);
+      const api = Comlink.wrap<{
+        generateBatch: (size: number, ...args: any[]) => Promise<any[]>;
+      }>(worker);
       pool.push({ worker, api });
     }
 
@@ -26,7 +28,7 @@ export default function useWalletWorker(
     };
   }, [WorkerClass, poolSize]);
 
-  const generateWallets = useCallback(async (count, ...args) => {
+  const generateWallets = useCallback(async (count: number, ...args: any[]) => {
     const pool = workersRef.current;
     if (pool.length === 0) return [];
 
