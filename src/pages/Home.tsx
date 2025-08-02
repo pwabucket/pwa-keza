@@ -2,6 +2,7 @@ import { Link } from "react-router";
 
 import AppContainer from "../layouts/AppContainer";
 import AppIcon from "../assets/images/icon.svg";
+import BitcoinIcon from "../assets/images/bitcoin-btc-logo.svg";
 import EVMIcon from "../assets/images/evm.svg";
 import Number12Icon from "../assets/images/number-12.svg";
 import Number24Icon from "../assets/images/number-24.svg";
@@ -13,22 +14,28 @@ import { cn } from "../lib/utils";
 
 const generators = [
   {
+    title: "Bitcoin Wallets",
+    icon: BitcoinIcon,
+    path: "/generator/bitcoin",
+    tags: ["BTC"],
+  },
+  {
     title: "EVM Wallets",
     icon: EVMIcon,
     path: "/generator/evm",
     tags: ["ETH", "BNB", "POL"],
   },
   {
-    title: "TON Wallets",
-    icon: TONIcon,
-    path: "/generator/ton",
-    tags: ["TON", "NOT", "DOGS"],
-  },
-  {
     title: "Solana Wallets",
     icon: SolanaIcon,
     path: "/generator/solana",
     tags: ["SOL", "WIF", "PENGU"],
+  },
+  {
+    title: "TON Wallets",
+    icon: TONIcon,
+    path: "/generator/ton",
+    tags: ["TON", "NOT", "DOGS"],
   },
   {
     title: "Stellar Wallets",

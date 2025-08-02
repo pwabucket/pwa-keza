@@ -1,6 +1,7 @@
 import { Route, Routes } from "react-router";
 import { Toaster } from "react-hot-toast";
 
+import BitcoinWalletGenerator from "./pages/BitcoinWalletGenerator";
 import EVMWalletGenerator from "./pages/EVMWalletGenerator";
 import Home from "./pages/Home";
 import MnemonicWalletGenerator from "./pages/MnemonicWalletGenerator";
@@ -18,9 +19,10 @@ function App() {
         <Route index element={<Home />} />
         <Route path="restore" element={<Restore />} />
         <Route path="generator">
+          <Route path="bitcoin" element={<BitcoinWalletGenerator />} />
           <Route path="evm" element={<EVMWalletGenerator />} />
-          <Route path="ton" element={<TONWalletGenerator />} />
           <Route path="solana" element={<SolanaWalletGenerator />} />
+          <Route path="ton" element={<TONWalletGenerator />} />
           <Route path="stellar" element={<StellarWalletGenerator />} />
           <Route
             path="12-word-mnemonic"
