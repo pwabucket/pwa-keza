@@ -7,16 +7,16 @@ import { mnemonicNew, mnemonicToPrivateKey } from "@ton/crypto";
 import { createWalletWorker } from "./createWalletWorker";
 
 createWalletWorker(async () => {
-  let mnemonic = await mnemonicNew();
-  let keyPair = await mnemonicToPrivateKey(mnemonic);
+  const mnemonic = await mnemonicNew();
+  const keyPair = await mnemonicToPrivateKey(mnemonic);
 
-  let workchain = 0;
-  let walletV4 = WalletContractV4.create({
+  const workchain = 0;
+  const walletV4 = WalletContractV4.create({
     workchain,
     publicKey: keyPair.publicKey,
   });
 
-  let walletV5 = WalletContractV5R1.create({
+  const walletV5 = WalletContractV5R1.create({
     workchain,
     publicKey: keyPair.publicKey,
   });
