@@ -1,4 +1,5 @@
 import { Keypair } from "@stellar/stellar-sdk";
+
 import type { WalletResult } from "../types/wallet";
 
 export const StellarWallet = {
@@ -11,7 +12,7 @@ export type StellarWalletGeneratorArguments = Parameters<
   typeof generateStellarWallet
 >;
 
-export async function generateStellarWallet() {
+export async function generateStellarWallet(): Promise<StellarWalletResult> {
   const key = Keypair.random();
 
   return {

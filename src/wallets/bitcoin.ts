@@ -27,7 +27,7 @@ export const bip32 = BIP32Factory(ecc);
 // Initialize bitcoinjs-lib with the ecc library
 bitcoin.initEccLib(ecc);
 
-export async function generateBitcoinWallet() {
+export async function generateBitcoinWallet(): Promise<BitcoinWalletResult> {
   const mnemonic = bip39.generateMnemonic();
   const seed = await bip39.mnemonicToSeed(mnemonic);
   const root = bip32.fromSeed(seed, bitcoin.networks.bitcoin);

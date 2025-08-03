@@ -12,7 +12,7 @@ export const EVMWallet = {
 export type EVMWalletResult = WalletResult<typeof EVMWallet>;
 export type EVMWalletGeneratorArguments = Parameters<typeof generateEVMWallet>;
 
-export async function generateEVMWallet() {
+export async function generateEVMWallet(): Promise<EVMWalletResult> {
   const wallet = Wallet.createRandom();
   return {
     [EVMWallet.ADDRESS]: wallet.address,

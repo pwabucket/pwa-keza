@@ -13,7 +13,7 @@ export type SolanaWalletGeneratorArguments = Parameters<
   typeof generateSolanaWallet
 >;
 
-export async function generateSolanaWallet() {
+export async function generateSolanaWallet(): Promise<SolanaWalletResult> {
   const key = Keypair.generate();
 
   return {
