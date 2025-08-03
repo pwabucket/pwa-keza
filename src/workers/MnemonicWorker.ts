@@ -1,13 +1,6 @@
 import "../lib/polyfill.ts";
 
-import { generateMnemonic } from "bip39";
-
 import { createWalletWorker } from "./createWalletWorker";
+import { generateMnemonicPhrase } from "../wallets/mnemonic.ts";
 
-createWalletWorker(async (strength: number) => {
-  const mnemonic = generateMnemonic(strength === 12 ? 128 : 256);
-
-  return {
-    ["Phrase"]: mnemonic,
-  };
-});
+createWalletWorker(generateMnemonicPhrase);

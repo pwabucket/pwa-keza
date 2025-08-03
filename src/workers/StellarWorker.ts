@@ -1,12 +1,4 @@
-import { Keypair } from "@stellar/stellar-sdk";
-
 import { createWalletWorker } from "./createWalletWorker";
+import { generateStellarWallet } from "../wallets/stellar";
 
-createWalletWorker(async () => {
-  const key = Keypair.random();
-
-  return {
-    ["Address"]: key.publicKey(),
-    ["Secret Key"]: key.secret(),
-  };
-});
+createWalletWorker(generateStellarWallet);

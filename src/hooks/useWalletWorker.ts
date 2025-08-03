@@ -1,20 +1,33 @@
 import * as Comlink from "comlink";
 import { useCallback, useEffect, useRef } from "react";
 
-export default function useWalletWorker(
-  WorkerClass: new () => Worker,
+import type { WorkerAPI } from "../workers/createWalletWorker";
+
+type WorkerConstructor = new () => Worker;
+
+type ComlinkWorkerArgs<T extends unknown[]> = {
+  [I in keyof T]: Comlink.UnproxyOrClone<T[I]>;
+};
+
+export default function useWalletWorker<
+  Generator extends (...args: Args) => Result,
+  Args extends unknown[] = Parameters<Generator>,
+  Result extends Record<string, string> = ReturnType<Generator>
+>(
+  WorkerClass: WorkerConstructor,
   poolSize = navigator.hardwareConcurrency || 4
 ) {
-  const workersRef = useRef<{ worker: Worker; api: any }[]>([]);
+  const workersRef = useRef<
+    { worker: Worker; api: Comlink.Remote<WorkerAPI<Args, Result>> }[]
+  >([]);
 
   useEffect(() => {
     const pool = [];
 
     for (let i = 0; i < poolSize; i++) {
       const worker = new WorkerClass();
-      const api = Comlink.wrap<{
-        generateBatch: (size: number, ...args: any[]) => Promise<any[]>;
-      }>(worker);
+      const api = Comlink.wrap<WorkerAPI<Args, Result>>(worker);
+
       pool.push({ worker, api });
     }
 
@@ -28,21 +41,26 @@ export default function useWalletWorker(
     };
   }, [WorkerClass, poolSize]);
 
-  const generateWallets = useCallback(async (count: number, ...args: any[]) => {
-    const pool = workersRef.current;
-    if (pool.length === 0) return [];
+  const generateWallets = useCallback(
+    async (count: number, ...args: ComlinkWorkerArgs<Args>) => {
+      const pool = workersRef.current;
+      if (pool.length === 0) return [];
 
-    const batchSize = Math.floor(count / pool.length);
-    const remainder = count % pool.length;
+      const batchSize = Math.floor(count / pool.length);
+      const remainder = count % pool.length;
 
-    const tasks = pool.map(({ api }, index) => {
-      const size = batchSize + (index < remainder ? 1 : 0);
-      return size > 0 ? api.generateBatch(size, ...args) : [];
-    });
+      const tasks = pool.map(({ api }, index) => {
+        const size = batchSize + (index < remainder ? 1 : 0);
+        const result =
+          size > 0 ? api.generateBatch(size, ...args) : Promise.resolve([]);
+        return result;
+      });
 
-    const results = await Promise.all(tasks);
-    return results.flat();
-  }, []);
+      const results = await Promise.all(tasks);
+      return results.flat();
+    },
+    []
+  );
 
   return generateWallets;
 }
