@@ -10,9 +10,9 @@ type ComlinkWorkerArgs<T extends unknown[]> = {
 };
 
 export default function useWalletWorker<
-  Generator extends (...args: Args) => Result,
+  Generator extends (...args: Args) => Promise<Result>,
   Args extends unknown[] = Parameters<Generator>,
-  Result extends Record<string, string> = ReturnType<Generator>
+  Result extends Record<string, string> = Awaited<ReturnType<Generator>>
 >(
   WorkerClass: WorkerConstructor,
   poolSize = navigator.hardwareConcurrency || 4

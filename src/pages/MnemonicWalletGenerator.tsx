@@ -3,7 +3,11 @@ import Number24Icon from "../assets/images/number-24.svg";
 import WalletsGenerator from "../components/WalletsGenerator";
 import useMnemonicWalletGenerator from "../hooks/useMnemonicWalletGenerator";
 
-export default function MnemonicWalletGenerator({ strength = 12 }) {
+export default function MnemonicWalletGenerator({
+  strength = 12,
+}: {
+  strength?: 12 | 24;
+}) {
   const generateWallet = useMnemonicWalletGenerator(strength);
 
   return (
