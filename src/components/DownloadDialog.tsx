@@ -3,13 +3,14 @@ import { Dialog } from "radix-ui";
 import { useCallback } from "react";
 
 import { cn } from "../lib/utils";
+import { openSafe } from "../lib/safe";
 
 export default function DownloadDialog({
   data,
   fileName,
 }: {
   data: Record<string, string>[];
-  fileName?: string;
+  fileName: string;
 }) {
   const download = useCallback(
     (exportType: ExportType) => {
@@ -21,6 +22,28 @@ export default function DownloadDialog({
     },
     [data, fileName]
   );
+
+  const encryptWithSafe = useCallback(() => {
+    const result = exportFromJSON({
+      data,
+      fileName,
+      exportType: exportFromJSON.types.txt,
+      processor: (content, type, filename) => ({
+        type,
+        filename,
+        content,
+      }),
+    });
+
+    openSafe({
+      filename: result.filename,
+      type: "file",
+      content: new File([result.content], result.filename, {
+        type: "text/plain",
+        lastModified: Date.now(),
+      }),
+    });
+  }, [fileName, data]);
 
   return (
     <Dialog.Overlay
@@ -46,6 +69,17 @@ export default function DownloadDialog({
             Export to different formats
           </Dialog.Description>
         </div>
+
+        <button
+          onClick={encryptWithSafe}
+          className={cn(
+            "font-bold text-center uppercase",
+            "px-4 py-2",
+            "bg-neutral-700 rounded-xl text-green-300"
+          )}
+        >
+          Encrypt with Safe
+        </button>
 
         {/* Export Buttons */}
         {[
