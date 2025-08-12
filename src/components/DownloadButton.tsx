@@ -6,12 +6,12 @@ import { cn } from "../lib/utils";
 
 type DownloadButtonProps = {
   data: Record<string, string>[];
-  fileName: string;
+  filename: string;
 } & React.ComponentProps<typeof Dialog.Trigger>;
 
 export default function DownloadButton({
   data,
-  fileName,
+  filename,
   ...props
 }: DownloadButtonProps) {
   return (
@@ -23,7 +23,7 @@ export default function DownloadButton({
         <TiDownloadOutline className="size-4" />
       </Dialog.Trigger>
 
-      <DownloadDialog data={data} fileName={fileName} />
+      <DownloadDialog data={data} filename={filename} />
     </Dialog.Root>
   );
 }

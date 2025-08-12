@@ -9,7 +9,7 @@ import { cn, copyToClipboard } from "../lib/utils";
 type WalletInfoContainerProps = {
   expanded: boolean;
   title: string;
-  fileName: string;
+  filename: string;
   wallet: Record<string, string>;
 } & React.ComponentProps<"div">;
 
@@ -23,7 +23,7 @@ const WalletInfoButton = (props: React.ComponentProps<"button">) => (
 export const WalletInfoContainer = ({
   expanded,
   title,
-  fileName,
+  filename,
   wallet,
   ...props
 }: WalletInfoContainerProps) => (
@@ -49,7 +49,7 @@ export const WalletInfoContainer = ({
         >
           <IoCopyOutline className="size-4" />
         </button>
-        <DownloadButton title="Download" fileName={fileName} data={[wallet]} />
+        <DownloadButton title="Download" filename={filename} data={[wallet]} />
       </div>
     </div>
     {Object.entries(wallet).map(([k, v], index) => (

@@ -8,26 +8,26 @@ import SafeIcon from "../assets/images/safe-icon.svg";
 
 export default function DownloadDialog({
   data,
-  fileName,
+  filename,
 }: {
   data: Record<string, string>[];
-  fileName: string;
+  filename: string;
 }) {
   const download = useCallback(
     (exportType: ExportType) => {
       exportFromJSON({
         data,
-        fileName,
+        filename,
         exportType,
       });
     },
-    [data, fileName]
+    [data, filename]
   );
 
   const encryptWithSafe = useCallback(() => {
     const result = exportFromJSON({
       data,
-      fileName,
+      filename,
       exportType: exportFromJSON.types.txt,
       processor: (content, type, filename) => ({
         type,
@@ -44,7 +44,7 @@ export default function DownloadDialog({
         lastModified: Date.now(),
       }),
     });
-  }, [fileName, data]);
+  }, [filename, data]);
 
   return (
     <Dialog.Overlay

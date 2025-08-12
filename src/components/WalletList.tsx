@@ -38,7 +38,7 @@ export default function WalletList({
             Download All
           </Dialog.Trigger>
           <DownloadDialog
-            fileName={`${id}-wallets-${Date.now()}`}
+            filename={`${id}-wallets-${Date.now()}`}
             data={wallets}
           />
         </Dialog.Root>
@@ -73,7 +73,7 @@ export default function WalletList({
             <div className="pb-4">
               <WalletInfoContainer
                 title={`Wallet ${index + 1}`}
-                fileName={`${id}-wallet-${Date.now()}-${index + 1}`}
+                filename={`${id}-wallet-${Date.now()}-${index + 1}`}
                 wallet={wallet}
                 expanded={expanded}
               />
