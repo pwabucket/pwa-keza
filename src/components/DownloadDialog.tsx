@@ -4,6 +4,7 @@ import { useCallback } from "react";
 
 import { cn } from "../lib/utils";
 import { openSafe } from "../lib/safe";
+import SafeIcon from "../assets/images/safe-icon.svg";
 
 export default function DownloadDialog({
   data,
@@ -70,14 +71,17 @@ export default function DownloadDialog({
           </Dialog.Description>
         </div>
 
+        {/* Encrypt with Safe */}
         <button
           onClick={encryptWithSafe}
           className={cn(
             "font-bold text-center uppercase",
-            "px-4 py-2",
-            "bg-neutral-700 rounded-xl text-green-300"
+            "px-4 py-1",
+            "bg-neutral-700 rounded-xl text-green-300",
+            "flex items-center justify-center gap-2"
           )}
         >
+          <img src={SafeIcon} alt="Safe Icon" className="size-6 rounded-full" />
           Encrypt with Safe
         </button>
 
