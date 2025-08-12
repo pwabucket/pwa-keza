@@ -6,7 +6,7 @@ import { cn } from "../lib/utils";
 
 type DownloadButtonProps = {
   data: Record<string, string>[];
-  fileName?: string;
+  fileName: string;
 } & React.ComponentProps<typeof Dialog.Trigger>;
 
 export default function DownloadButton({
