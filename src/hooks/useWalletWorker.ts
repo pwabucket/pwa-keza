@@ -1,7 +1,7 @@
 import * as Comlink from "comlink";
 import { useCallback, useEffect, useRef } from "react";
 
-import type { WorkerAPI } from "../workers/createWalletWorker";
+import type { WorkerAPI } from "../lib/worker";
 
 type WorkerConstructor = new () => Worker;
 

@@ -1,4 +1,4 @@
-import { createWalletWorker } from "./createWalletWorker";
+import { createWalletWorker } from "../lib/worker";
 import { generateSolanaWallet } from "../wallets/solana";
 
 createWalletWorker(generateSolanaWallet);
