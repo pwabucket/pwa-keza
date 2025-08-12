@@ -17,7 +17,7 @@ export default function DownloadDialog({
     (exportType: ExportType) => {
       exportFromJSON({
         data,
-        filename,
+        fileName: filename,
         exportType,
       });
     },
@@ -27,7 +27,7 @@ export default function DownloadDialog({
   const encryptWithSafe = useCallback(() => {
     const result = exportFromJSON({
       data,
-      filename,
+      fileName: filename,
       exportType: exportFromJSON.types.txt,
       processor: (content, type, filename) => ({
         type,
