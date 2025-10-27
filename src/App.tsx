@@ -11,6 +11,7 @@ import SolanaWalletGenerator from "./pages/SolanaWalletGenerator";
 import StellarWalletGenerator from "./pages/StellarWalletGenerator";
 import TONWalletGenerator from "./pages/TONWalletGenerator";
 import TermsOfUse from "./pages/TermsOfUse";
+import TronWalletGenerator from "./pages/TronWalletGenerator";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="bitcoin" element={<BitcoinWalletGenerator />} />
           <Route path="evm" element={<EVMWalletGenerator />} />
           <Route path="solana" element={<SolanaWalletGenerator />} />
+          <Route path="tron" element={<TronWalletGenerator />} />
           <Route path="ton" element={<TONWalletGenerator />} />
           <Route path="stellar" element={<StellarWalletGenerator />} />
           <Route
