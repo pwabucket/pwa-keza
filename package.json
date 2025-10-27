@@ -44,7 +44,8 @@
     "repeat-element": "^1.1.4",
     "tailwind-merge": "^3.3.1",
     "tailwindcss": "^4.1.11",
-    "tiny-secp256k1": "^2.2.4"
+    "tiny-secp256k1": "^2.2.4",
+    "tronweb": "^6.0.4"
   },
   "devDependencies": {
     "@eslint/js": "^9.32.0",
