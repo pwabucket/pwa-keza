@@ -15,7 +15,9 @@ export const TONWallet = {
 export type TONWalletResult = WalletResult<typeof TONWallet>;
 export type TONWalletGeneratorArguments = Parameters<typeof generateTONWallet>;
 
-export async function generateTONWallet(): Promise<TONWalletResult> {
+export async function generateTONWallet(
+  testOnly: boolean = false
+): Promise<TONWalletResult> {
   const mnemonic = await mnemonicNew();
   const keyPair = await mnemonicToPrivateKey(mnemonic);
 
@@ -32,11 +34,11 @@ export async function generateTONWallet(): Promise<TONWalletResult> {
 
   const addressV4 = walletV4.address.toString({
     bounceable: false,
-    testOnly: false,
+    testOnly,
   });
   const addressV5 = walletV5.address.toString({
     bounceable: false,
-    testOnly: false,
+    testOnly,
   });
 
   return {

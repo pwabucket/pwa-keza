@@ -12,9 +12,11 @@ type WalletsGeneratorProps = {
   title: string;
   generate: (
     count: number,
+    isTestnet: boolean,
     ...args: unknown[]
   ) => Promise<Record<string, string>[]>;
   defaultExpanded?: boolean;
+  supportsTestnet?: boolean;
 };
 
 export default function WalletsGenerator({
@@ -23,19 +25,28 @@ export default function WalletsGenerator({
   title,
   generate,
   defaultExpanded = false,
+  supportsTestnet = false,
 }: WalletsGeneratorProps) {
-  const { count, wallets, expanded, setExpanded, setCount, setWallets } =
-    useWallets(defaultExpanded);
+  const {
+    count,
+    wallets,
+    expanded,
+    setExpanded,
+    setCount,
+    setWallets,
+    isTestnet,
+    setIsTestnet,
+  } = useWallets(defaultExpanded);
 
   const generateWallets = useCallback(async () => {
     setWallets(
-      await toast.promise(generate(count as number), {
+      await toast.promise(generate(count as number, isTestnet), {
         loading: "Generating...",
         success: "Generated successfully!",
         error: (err) => `Error: ${err.message || err}`,
       })
     );
-  }, [count, setWallets, generate]);
+  }, [count, isTestnet, setWallets, generate]);
 
   return (
     <InnerAppLayout
@@ -50,6 +61,9 @@ export default function WalletsGenerator({
         count={count}
         setCount={setCount}
         generate={generateWallets}
+        isTestnet={isTestnet}
+        setIsTestnet={setIsTestnet}
+        supportsTestnet={supportsTestnet}
       />
 
       {wallets.length > 0 ? (

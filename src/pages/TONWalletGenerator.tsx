@@ -11,6 +11,7 @@ export default function TONWalletGenerator() {
       title="TON Wallets"
       icon={TONIcon}
       generate={generateTONWallet}
+      supportsTestnet={true}
     />
   );
 }
