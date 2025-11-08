@@ -39,6 +39,8 @@ export default function WalletGeneratorInput({
           placeholder="Count"
           value={count}
           onChange={(ev) => setCount(ev.target.value)}
+          type="number"
+          inputMode="numeric"
         />
         <div className="flex gap-1 shrink-0">
           <NumberInputButton
