@@ -1,6 +1,7 @@
 import exportFromJSON, { type ExportType } from "export-from-json";
 import { Dialog } from "radix-ui";
 import { useCallback } from "react";
+import { FaFileAlt, FaFileCsv, FaFileExcel, FaFileCode } from "react-icons/fa";
 
 import { cn } from "../lib/utils";
 import { openSafe } from "../lib/safe";
@@ -45,6 +46,21 @@ export default function DownloadDialog({
       }),
     });
   }, [filename, data]);
+
+  const getFileIcon = (type: ExportType) => {
+    switch (type) {
+      case "txt":
+        return <FaFileAlt className="size-5" />;
+      case "csv":
+        return <FaFileCsv className="size-5" />;
+      case "xls":
+        return <FaFileExcel className="size-5" />;
+      case "json":
+        return <FaFileCode className="size-5" />;
+      default:
+        return <FaFileAlt className="size-5" />;
+    }
+  };
 
   return (
     <Dialog.Overlay
@@ -95,13 +111,15 @@ export default function DownloadDialog({
           <button
             key={type}
             className={cn(
-              "font-bold text-center uppercase",
-              "px-4 py-2",
-              "bg-neutral-700 rounded-xl"
+              "font-bold uppercase",
+              "bg-neutral-700 rounded-xl",
+              "flex justify-center items-center gap-2",
+              "px-4 py-2 text-left"
             )}
             onClick={() => download(type)}
           >
-            {type}
+            {getFileIcon(type)}
+            <span className="min-w-10">{type}</span>
           </button>
         ))}
         {/* Cancel Button */}
