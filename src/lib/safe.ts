@@ -5,12 +5,12 @@ export function openSafe(entry: {
   filename: string;
   content: File;
 }) {
-  const safeWindow = window.open(SAFE_URL, "_blank");
+  window.open(SAFE_URL, "_blank");
 
   function handleSafeReady(event: MessageEvent) {
-    if (event.origin !== SAFE_URL) return;
+    if (event.origin !== new URL(SAFE_URL).origin) return;
     if (event.data === "ready") {
-      safeWindow!.postMessage(entry, SAFE_URL);
+      event.source!.postMessage(entry, SAFE_URL);
       window.removeEventListener("message", handleSafeReady);
     }
   }
