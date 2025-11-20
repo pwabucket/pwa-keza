@@ -50,7 +50,9 @@ const ParcelDialog = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
         </Dialog.Title>
 
         {/* Hidden Description */}
-        <Dialog.Description className="sr-only">Split Panel</Dialog.Description>
+        <Dialog.Description className="sr-only">
+          Parcel Panel
+        </Dialog.Description>
 
         {/* Close Button */}
         <div className="size-10 shrink-0">
