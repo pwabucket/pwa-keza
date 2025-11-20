@@ -1,8 +1,9 @@
 import EVMIcon from "../assets/images/evm.svg";
 import WalletsGenerator from "../components/WalletsGenerator";
 import useEVMWalletGenerator from "../hooks/useEVMWalletGenerator";
+import { getEVMParcelConfig } from "../wallets/evm";
 
-export default function TONWalletGenerator() {
+export default function EVMWalletGenerator() {
   const generateEVMWallet = useEVMWalletGenerator();
 
   return (
@@ -11,6 +12,7 @@ export default function TONWalletGenerator() {
       title="EVM Wallets"
       icon={EVMIcon}
       generate={generateEVMWallet}
+      getParcelConfig={getEVMParcelConfig}
     />
   );
 }

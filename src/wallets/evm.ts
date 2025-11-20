@@ -21,3 +21,14 @@ export async function generateEVMWallet(): Promise<EVMWalletResult> {
     [EVMWallet.PHRASE]: wallet.mnemonic?.phrase as string,
   };
 }
+
+export function getEVMParcelConfig(wallets: Record<string, string>[]) {
+  return {
+    group: "evm",
+    recipients: wallets.map((w) => w[EVMWallet.ADDRESS]),
+    senders: wallets.map((w) => ({
+      address: w[EVMWallet.ADDRESS],
+      privateKey: w[EVMWallet.PRIVATE_KEY],
+    })),
+  };
+}

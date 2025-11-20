@@ -5,16 +5,14 @@ import InnerAppLayout from "../layouts/InnerAppLayout";
 import WalletGeneratorInput from "../components/WalletGeneratorInput";
 import WalletList from "./WalletList";
 import useWallets from "../hooks/useWallets";
+import type { GenerateWallet, GetParcelConfig } from "../types/wallet";
 
 type WalletsGeneratorProps = {
   id: string;
   icon: string;
   title: string;
-  generate: (
-    count: number,
-    isTestnet: boolean,
-    ...args: unknown[]
-  ) => Promise<Record<string, string>[]>;
+  generate: GenerateWallet;
+  getParcelConfig?: GetParcelConfig<Record<string, string>>;
   defaultExpanded?: boolean;
   supportsTestnet?: boolean;
 };
@@ -24,6 +22,7 @@ export default function WalletsGenerator({
   icon,
   title,
   generate,
+  getParcelConfig,
   defaultExpanded = false,
   supportsTestnet = false,
 }: WalletsGeneratorProps) {
@@ -72,6 +71,7 @@ export default function WalletsGenerator({
           wallets={wallets}
           expanded={expanded}
           setExpanded={setExpanded}
+          getParcelConfig={getParcelConfig}
         />
       ) : (
         <p className="italic text-center p-4">Click generate to start...</p>

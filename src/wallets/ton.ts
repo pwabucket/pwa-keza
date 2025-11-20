@@ -49,3 +49,29 @@ export async function generateTONWallet(
     [TONWallet.PHRASE]: mnemonic.join(" "),
   };
 }
+
+export function getTONParcelConfig(
+  wallets: Record<string, string>[],
+  version = 5
+) {
+  return {
+    group: "ton",
+    blockchain: "ton",
+    recipients:
+      version === 5
+        ? wallets.map((w) => w[TONWallet.ADDRESS_V5])
+        : wallets.map((w) => w[TONWallet.ADDRESS_V4]),
+    senders:
+      version === 5
+        ? wallets.map((w) => ({
+            address: w[TONWallet.ADDRESS_V5],
+            mnemonic: w[TONWallet.PHRASE],
+            version: 5,
+          }))
+        : wallets.map((w) => ({
+            address: w[TONWallet.ADDRESS_V4],
+            mnemonic: w[TONWallet.PHRASE],
+            version: 4,
+          })),
+  };
+}
