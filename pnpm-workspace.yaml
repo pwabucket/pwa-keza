@@ -1,4 +1,5 @@
 onlyBuiltDependencies:
+  - '@stellar/stellar-sdk'
   - '@swc/core'
   - '@tailwindcss/oxide'
   - bufferutil
