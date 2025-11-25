@@ -8,13 +8,7 @@ import useWallets from "../hooks/useWallets";
 import useGeneratorContext from "../hooks/useGeneratorContext";
 import useWalletWorker from "../hooks/useWalletWorker";
 
-type WalletsGeneratorProps = {
-  defaultExpanded?: boolean;
-};
-
-export default function WalletsGenerator({
-  defaultExpanded = false,
-}: WalletsGeneratorProps) {
+export default function WalletsGenerator() {
   const wallet = useGeneratorContext();
   const generate = useWalletWorker(wallet?.worker);
   const {
@@ -26,7 +20,7 @@ export default function WalletsGenerator({
     setWallets,
     isTestnet,
     setIsTestnet,
-  } = useWallets(defaultExpanded);
+  } = useWallets(wallet.defaultExpanded ?? false);
 
   /* Generate wallets */
   const generateWallets = useCallback(async () => {

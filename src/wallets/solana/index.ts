@@ -8,4 +8,5 @@ export default {
   icon: Icon,
   tags: ["SOL", "WIF", "PENGU"],
   worker: Worker,
+  defaultExpanded: true,
 } as WalletModule;

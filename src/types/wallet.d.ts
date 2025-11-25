@@ -33,6 +33,7 @@ export interface WalletModule {
   title: string;
   icon: string;
   tags: string[];
+  defaultExpanded?: boolean;
   supportsTestnet?: boolean;
   worker: new (options?: { name?: string }) => Worker;
   getParcelConfig: (

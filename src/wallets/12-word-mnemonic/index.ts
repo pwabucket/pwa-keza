@@ -8,4 +8,5 @@ export default {
   icon: Icon,
   tags: ["Metamask", "Bitget Wallet"],
   worker: Worker,
+  defaultExpanded: true,
 } as WalletModule;

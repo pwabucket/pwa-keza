@@ -51,6 +51,7 @@ export default function Restore() {
 
           if (detectedModule) {
             setModule(detectedModule);
+            setExpanded(detectedModule.defaultExpanded ?? false);
           } else {
             setModule(null);
           }
@@ -60,7 +61,7 @@ export default function Restore() {
       });
       reader.readAsText(file);
     },
-    [setWallets]
+    [setWallets, setExpanded]
   );
 
   const { getRootProps, getInputProps, isDragActive } = useDropzone({

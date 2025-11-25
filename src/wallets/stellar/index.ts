@@ -8,4 +8,5 @@ export default {
   icon: Icon,
   tags: ["XLM", "SSLX", "USDC"],
   worker: Worker,
+  defaultExpanded: true,
 } as WalletModule;
