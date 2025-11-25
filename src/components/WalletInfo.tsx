@@ -78,7 +78,7 @@ export const WalletInfo = ({
         <p
           className={cn(
             "font-bold font-mono",
-            expanded ? "break-words" : "truncate"
+            expanded ? "break-all" : "truncate"
           )}
         >
           {value}
