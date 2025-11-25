@@ -7,6 +7,12 @@ import { cn } from "../lib/utils";
 import { openSafe } from "../lib/safe";
 import SafeIcon from "../assets/images/safe-icon.svg";
 import { PopupDialog } from "./PopupDialog";
+import { format } from "date-fns";
+
+const getExportFilename = (base: string) => {
+  const timestamp = format(new Date(), "yyyy-MM-dd_HH-mm-ss");
+  return `keza-${base}-${timestamp}`;
+};
 
 export default function DownloadDialog({
   data,
@@ -19,7 +25,7 @@ export default function DownloadDialog({
     (exportType: ExportType) => {
       exportFromJSON({
         data,
-        fileName: filename,
+        fileName: getExportFilename(filename),
         exportType,
       });
     },
@@ -29,7 +35,7 @@ export default function DownloadDialog({
   const encryptWithSafe = useCallback(() => {
     const result = exportFromJSON({
       data,
-      fileName: filename,
+      fileName: getExportFilename(filename),
       exportType: exportFromJSON.types.txt,
       processor: (content, type, filename) => ({
         type,

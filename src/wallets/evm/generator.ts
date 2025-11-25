@@ -1,13 +1,7 @@
 import { Wallet } from "ethers";
 
 import type { WalletResult } from "../../types/wallet";
-
-export const EVMWallet = {
-  ADDRESS: "Address",
-  PUBLIC_KEY: "Public Key",
-  PRIVATE_KEY: "Private Key",
-  PHRASE: "Phrase",
-} as const;
+import { EVMWallet } from "./constants";
 
 export type EVMWalletResult = WalletResult<typeof EVMWallet>;
 export type EVMWalletGeneratorArguments = Parameters<typeof generateEVMWallet>;

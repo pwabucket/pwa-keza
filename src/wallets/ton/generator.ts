@@ -3,14 +3,7 @@ import { WalletContractV4, WalletContractV5R1 } from "@ton/ton";
 import { mnemonicNew, mnemonicToPrivateKey } from "@ton/crypto";
 
 import type { WalletResult } from "../../types/wallet";
-
-export const TONWallet = {
-  ADDRESS_V5: "Address V5",
-  ADDRESS_V4: "Address V4",
-  PUBLIC_KEY: "Public Key",
-  SECRET_KEY: "Secret Key",
-  PHRASE: "Phrase",
-} as const;
+import { TONWallet } from "./constants";
 
 export type TONWalletResult = WalletResult<typeof TONWallet>;
 export type TONWalletGeneratorArguments = Parameters<typeof generateTONWallet>;

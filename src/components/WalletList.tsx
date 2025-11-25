@@ -55,10 +55,7 @@ export default function WalletList({
           >
             Download All
           </Dialog.Trigger>
-          <DownloadDialog
-            filename={`${id}-wallets-${Date.now()}`}
-            data={wallets}
-          />
+          <DownloadDialog filename={`${id}-wallets`} data={wallets} />
         </Dialog.Root>
 
         {/* Expand Button */}
@@ -91,7 +88,7 @@ export default function WalletList({
             <div className="pb-4">
               <WalletInfoContainer
                 title={`Wallet ${index + 1}`}
-                filename={`${id}-wallet-${Date.now()}-${index + 1}`}
+                filename={`${id}-wallet-${index + 1}`}
                 wallet={wallet}
                 expanded={expanded}
               />

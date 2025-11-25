@@ -1,5 +1,5 @@
 import type { WalletModule } from "../../types/wallet";
-import { EVMWallet } from "./generator";
+import { EVMWallet } from "./constants";
 import Icon from "./icon.svg";
 import Worker from "./worker?worker";
 
