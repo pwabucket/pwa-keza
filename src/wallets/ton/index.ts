@@ -7,7 +7,7 @@ export default {
   id: "ton",
   title: "TON Wallets",
   icon: Icon,
-  tags: ["TON", "TONCOIN", "TONOS"],
+  tags: ["TON", "NOT", "DOGS"],
   supportsTestnet: true,
   worker: Worker,
   getParcelConfig(wallets, { version = 5 }: { version?: number } = {}) {
