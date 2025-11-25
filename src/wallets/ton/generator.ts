@@ -2,7 +2,7 @@ import { Buffer } from "buffer";
 import { WalletContractV4, WalletContractV5R1 } from "@ton/ton";
 import { mnemonicNew, mnemonicToPrivateKey } from "@ton/crypto";
 
-import type { WalletResult } from "../types/wallet";
+import type { WalletResult } from "../../types/wallet";
 
 export const TONWallet = {
   ADDRESS_V5: "Address V5",
@@ -15,9 +15,9 @@ export const TONWallet = {
 export type TONWalletResult = WalletResult<typeof TONWallet>;
 export type TONWalletGeneratorArguments = Parameters<typeof generateTONWallet>;
 
-export async function generateTONWallet(
-  testOnly: boolean = false
-): Promise<TONWalletResult> {
+export async function generateTONWallet({
+  testnet = false,
+}: { testnet?: boolean } = {}): Promise<TONWalletResult> {
   const mnemonic = await mnemonicNew();
   const keyPair = await mnemonicToPrivateKey(mnemonic);
 
@@ -34,11 +34,11 @@ export async function generateTONWallet(
 
   const addressV4 = walletV4.address.toString({
     bounceable: false,
-    testOnly,
+    testOnly: testnet,
   });
   const addressV5 = walletV5.address.toString({
     bounceable: false,
-    testOnly,
+    testOnly: testnet,
   });
 
   return {
@@ -47,31 +47,5 @@ export async function generateTONWallet(
     [TONWallet.PUBLIC_KEY]: Buffer.from(keyPair.publicKey).toString("hex"),
     [TONWallet.SECRET_KEY]: Buffer.from(keyPair.secretKey).toString("hex"),
     [TONWallet.PHRASE]: mnemonic.join(" "),
-  };
-}
-
-export function getTONParcelConfig(
-  wallets: Record<string, string>[],
-  version = 5
-) {
-  return {
-    group: "ton",
-    blockchain: "ton",
-    recipients:
-      version === 5
-        ? wallets.map((w) => w[TONWallet.ADDRESS_V5])
-        : wallets.map((w) => w[TONWallet.ADDRESS_V4]),
-    senders:
-      version === 5
-        ? wallets.map((w) => ({
-            address: w[TONWallet.ADDRESS_V5],
-            mnemonic: w[TONWallet.PHRASE],
-            version: 5,
-          }))
-        : wallets.map((w) => ({
-            address: w[TONWallet.ADDRESS_V4],
-            mnemonic: w[TONWallet.PHRASE],
-            version: 4,
-          })),
   };
 }

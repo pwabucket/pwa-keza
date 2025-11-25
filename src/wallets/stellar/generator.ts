@@ -1,6 +1,6 @@
 import { Keypair } from "@stellar/stellar-sdk";
 
-import type { WalletResult } from "../types/wallet";
+import type { WalletResult } from "../../types/wallet";
 
 export const StellarWallet = {
   ADDRESS: "Address",

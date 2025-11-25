@@ -1,27 +1,17 @@
 import * as Comlink from "comlink";
+import type { WalletGeneratorOptions, WorkerAPI } from "../types/wallet";
 
-export type WorkerAPI<
-  Args extends unknown[],
-  Result extends Record<string, string>
-> = {
-  generate: (...args: Args) => Promise<Result>;
-  generateBatch: (count: number, ...args: Args) => Promise<Result[]>;
-};
-
-export const createWalletWorker = <
-  Result extends Record<string, string>,
-  Args extends unknown[] = []
->(
-  generate: (...args: Args) => Promise<Result>
+export const createWalletWorker = <Result extends Record<string, string>>(
+  generate: (options: WalletGeneratorOptions) => Promise<Result>
 ) => {
-  const handler: WorkerAPI<Args, Result> = {
-    async generate(...args: Args) {
-      return generate(...args);
+  const handler: WorkerAPI<Result> = {
+    async generate(options) {
+      return generate(options);
     },
-    async generateBatch(count: number, ...args: Args) {
+    async generateBatch(count, options) {
       const result = [];
       for (let i = 0; i < count; i++) {
-        result.push(await generate(...args));
+        result.push(await generate(options));
       }
 
       return result;

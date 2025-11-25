@@ -4,7 +4,7 @@ import * as ecc from "tiny-secp256k1";
 import BIP32Factory from "bip32";
 import { Buffer } from "buffer";
 
-import type { WalletResult } from "../types/wallet";
+import type { WalletResult } from "../../types/wallet";
 
 export const BitcoinWallet = {
   MNEMONIC: "Mnemonic Phrase",

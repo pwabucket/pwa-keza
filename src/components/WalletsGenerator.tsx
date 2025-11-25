@@ -5,27 +5,18 @@ import InnerAppLayout from "../layouts/InnerAppLayout";
 import WalletGeneratorInput from "../components/WalletGeneratorInput";
 import WalletList from "./WalletList";
 import useWallets from "../hooks/useWallets";
-import type { GenerateWallet, GetParcelConfig } from "../types/wallet";
+import useGeneratorContext from "../hooks/useGeneratorContext";
+import useWalletWorker from "../hooks/useWalletWorker";
 
 type WalletsGeneratorProps = {
-  id: string;
-  icon: string;
-  title: string;
-  generate: GenerateWallet;
-  getParcelConfig?: GetParcelConfig<Record<string, string>>;
   defaultExpanded?: boolean;
-  supportsTestnet?: boolean;
 };
 
 export default function WalletsGenerator({
-  id,
-  icon,
-  title,
-  generate,
-  getParcelConfig,
   defaultExpanded = false,
-  supportsTestnet = false,
 }: WalletsGeneratorProps) {
+  const wallet = useGeneratorContext();
+  const generate = useWalletWorker(wallet?.worker);
   const {
     count,
     wallets,
@@ -37,13 +28,19 @@ export default function WalletsGenerator({
     setIsTestnet,
   } = useWallets(defaultExpanded);
 
+  /* Generate wallets */
   const generateWallets = useCallback(async () => {
     setWallets(
-      await toast.promise(generate(count as number, isTestnet), {
-        loading: "Generating...",
-        success: "Generated successfully!",
-        error: (err) => `Error: ${err.message || err}`,
-      })
+      await toast.promise(
+        generate(count as number, {
+          testnet: isTestnet,
+        }),
+        {
+          loading: "Generating...",
+          success: "Generated successfully!",
+          error: (err) => `Error: ${err.message || err}`,
+        }
+      )
     );
   }, [count, isTestnet, setWallets, generate]);
 
@@ -51,8 +48,8 @@ export default function WalletsGenerator({
     <InnerAppLayout
       headerMiddleContent={
         <div className="flex justify-center items-center gap-2">
-          <img src={icon} className="size-8" />{" "}
-          <h1 className="font-bold">{title}</h1>
+          <img src={wallet.icon} className="size-8" />{" "}
+          <h1 className="font-bold">{wallet.title}</h1>
         </div>
       }
     >
@@ -62,16 +59,16 @@ export default function WalletsGenerator({
         generate={generateWallets}
         isTestnet={isTestnet}
         setIsTestnet={setIsTestnet}
-        supportsTestnet={supportsTestnet}
+        supportsTestnet={wallet.supportsTestnet || false}
       />
 
       {wallets.length > 0 ? (
         <WalletList
-          id={id}
+          id={wallet.id}
           wallets={wallets}
           expanded={expanded}
           setExpanded={setExpanded}
-          getParcelConfig={getParcelConfig}
+          getParcelConfig={wallet.getParcelConfig}
         />
       ) : (
         <p className="italic text-center p-4">Click generate to start...</p>

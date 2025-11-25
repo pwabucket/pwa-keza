@@ -1,32 +1,31 @@
 import * as Comlink from "comlink";
 import { useCallback, useEffect, useRef } from "react";
 
-import type { WorkerAPI } from "../lib/worker";
-
-type WorkerConstructor = new () => Worker;
-
-type ComlinkWorkerArgs<T extends unknown[]> = {
-  [I in keyof T]: Comlink.UnproxyOrClone<T[I]>;
-};
+import type {
+  WalletGeneratorOptions,
+  WorkerAPI,
+  WorkerConstructor,
+} from "../types/wallet";
 
 export default function useWalletWorker<
-  Generator extends (...args: Args) => Promise<Result>,
-  Args extends unknown[] = Parameters<Generator>,
+  Generator extends (options: WalletGeneratorOptions) => Promise<Result>,
   Result extends Record<string, string> = Awaited<ReturnType<Generator>>
 >(
-  WorkerClass: WorkerConstructor,
+  WorkerClass: WorkerConstructor | undefined,
   poolSize = navigator.hardwareConcurrency || 4
 ) {
   const workersRef = useRef<
-    { worker: Worker; api: Comlink.Remote<WorkerAPI<Args, Result>> }[]
+    { worker: Worker; api: Comlink.Remote<WorkerAPI<Result>> }[]
   >([]);
 
   useEffect(() => {
+    if (!WorkerClass) return;
+
     const pool = [];
 
     for (let i = 0; i < poolSize; i++) {
       const worker = new WorkerClass();
-      const api = Comlink.wrap<WorkerAPI<Args, Result>>(worker);
+      const api = Comlink.wrap<WorkerAPI<Result>>(worker);
 
       pool.push({ worker, api });
     }
@@ -42,7 +41,7 @@ export default function useWalletWorker<
   }, [WorkerClass, poolSize]);
 
   const generateWallets = useCallback(
-    async (count: number, ...args: ComlinkWorkerArgs<Args>) => {
+    async (count: number, options: WalletGeneratorOptions) => {
       const pool = workersRef.current;
       if (pool.length === 0) return [];
 
@@ -52,7 +51,7 @@ export default function useWalletWorker<
       const tasks = pool.map(({ api }, index) => {
         const size = batchSize + (index < remainder ? 1 : 0);
         const result =
-          size > 0 ? api.generateBatch(size, ...args) : Promise.resolve([]);
+          size > 0 ? api.generateBatch(size, options) : Promise.resolve([]);
         return result;
       });
 

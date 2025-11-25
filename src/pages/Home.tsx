@@ -2,67 +2,9 @@ import { Link } from "react-router";
 
 import AppContainer from "../layouts/AppContainer";
 import AppIcon from "../assets/images/icon.svg";
-import BitcoinIcon from "../assets/images/bitcoin-btc-logo.svg";
-import EVMIcon from "../assets/images/evm.svg";
-import Number12Icon from "../assets/images/number-12.svg";
-import Number24Icon from "../assets/images/number-24.svg";
 import RestoreIcon from "../assets/images/restore.svg";
-import SolanaIcon from "../assets/images/solana.svg";
-import StellarIcon from "../assets/images/stellar.svg";
-import TronIcon from "../assets/images/tron.svg";
-import TONIcon from "../assets/images/ton.svg";
 import { cn } from "../lib/utils";
-
-const generators = [
-  {
-    title: "Bitcoin Wallets",
-    icon: BitcoinIcon,
-    path: "/generator/bitcoin",
-    tags: ["BTC"],
-  },
-  {
-    title: "EVM Wallets",
-    icon: EVMIcon,
-    path: "/generator/evm",
-    tags: ["ETH", "BNB", "POL"],
-  },
-  {
-    title: "Solana Wallets",
-    icon: SolanaIcon,
-    path: "/generator/solana",
-    tags: ["SOL", "WIF", "PENGU"],
-  },
-  {
-    title: "Tron Wallets",
-    icon: TronIcon,
-    path: "/generator/tron",
-    tags: ["TRX", "SUN", "BTT"],
-  },
-  {
-    title: "TON Wallets",
-    icon: TONIcon,
-    path: "/generator/ton",
-    tags: ["TON", "NOT", "DOGS"],
-  },
-  {
-    title: "Stellar Wallets",
-    icon: StellarIcon,
-    path: "/generator/stellar",
-    tags: ["XLM", "SSLX", "USDC"],
-  },
-  {
-    title: "12-Word Mnemonic Wallets",
-    icon: Number12Icon,
-    path: "/generator/12-word-mnemonic",
-    tags: ["Metamask", "Bitget Wallet"],
-  },
-  {
-    title: "24-Word Mnemonic Wallets",
-    icon: Number24Icon,
-    path: "/generator/24-word-mnemonic",
-    tags: ["Tonkeeper", "Phantom"],
-  },
-];
+import wallets from "../wallets";
 
 const PageLink = ({
   path,
@@ -145,8 +87,14 @@ export default function Home() {
         </p>
       </div>
       <div className="flex flex-col gap-2">
-        {generators.map((item, index) => (
-          <PageLink key={index} {...item} />
+        {wallets.map((item, index) => (
+          <PageLink
+            key={index}
+            title={item.title}
+            icon={item.icon}
+            path={`/generator/${item.id}`}
+            tags={item.tags}
+          />
         ))}
       </div>
       <p

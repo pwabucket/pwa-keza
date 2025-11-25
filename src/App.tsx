@@ -1,17 +1,11 @@
 import { Route, Routes } from "react-router";
 import { Toaster } from "react-hot-toast";
 
-import BitcoinWalletGenerator from "./pages/BitcoinWalletGenerator";
-import EVMWalletGenerator from "./pages/EVMWalletGenerator";
 import Home from "./pages/Home";
-import MnemonicWalletGenerator from "./pages/MnemonicWalletGenerator";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Restore from "./pages/Restore";
-import SolanaWalletGenerator from "./pages/SolanaWalletGenerator";
-import StellarWalletGenerator from "./pages/StellarWalletGenerator";
-import TONWalletGenerator from "./pages/TONWalletGenerator";
 import TermsOfUse from "./pages/TermsOfUse";
-import TronWalletGenerator from "./pages/TronWalletGenerator";
+import WalletGenerator from "./pages/WalletGenerator";
 
 function App() {
   return (
@@ -19,22 +13,8 @@ function App() {
       <Routes>
         <Route index element={<Home />} />
         <Route path="restore" element={<Restore />} />
-        <Route path="generator">
-          <Route path="bitcoin" element={<BitcoinWalletGenerator />} />
-          <Route path="evm" element={<EVMWalletGenerator />} />
-          <Route path="solana" element={<SolanaWalletGenerator />} />
-          <Route path="tron" element={<TronWalletGenerator />} />
-          <Route path="ton" element={<TONWalletGenerator />} />
-          <Route path="stellar" element={<StellarWalletGenerator />} />
-          <Route
-            path="12-word-mnemonic"
-            element={<MnemonicWalletGenerator strength={12} />}
-          />
-          <Route
-            path="24-word-mnemonic"
-            element={<MnemonicWalletGenerator strength={24} />}
-          />
-        </Route>
+        <Route path="generator/:id" element={<WalletGenerator />} />
+
         {/* Privacy Policy */}
         <Route path="privacy-policy" element={<PrivacyPolicy />} />
 

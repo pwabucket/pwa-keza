@@ -1,5 +1,5 @@
 import { utils } from "tronweb";
-import type { WalletResult } from "../types/wallet";
+import type { WalletResult } from "../../types/wallet";
 
 export const TronWallet = {
   ADDRESS: "Address",

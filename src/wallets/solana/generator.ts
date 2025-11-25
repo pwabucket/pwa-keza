@@ -1,7 +1,7 @@
 import { Buffer } from "buffer";
 import { Keypair } from "@solana/web3.js";
 
-import type { WalletResult } from "../types/wallet";
+import type { WalletResult } from "../../types/wallet";
 
 export const SolanaWallet = {
   ADDRESS: "Address",

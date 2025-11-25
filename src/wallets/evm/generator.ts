@@ -1,6 +1,6 @@
 import { Wallet } from "ethers";
 
-import type { WalletResult } from "../types/wallet";
+import type { WalletResult } from "../../types/wallet";
 
 export const EVMWallet = {
   ADDRESS: "Address",
@@ -19,16 +19,5 @@ export async function generateEVMWallet(): Promise<EVMWalletResult> {
     [EVMWallet.PUBLIC_KEY]: wallet.publicKey,
     [EVMWallet.PRIVATE_KEY]: wallet.privateKey,
     [EVMWallet.PHRASE]: wallet.mnemonic?.phrase as string,
-  };
-}
-
-export function getEVMParcelConfig(wallets: Record<string, string>[]) {
-  return {
-    group: "evm",
-    recipients: wallets.map((w) => w[EVMWallet.ADDRESS]),
-    senders: wallets.map((w) => ({
-      address: w[EVMWallet.ADDRESS],
-      privateKey: w[EVMWallet.PRIVATE_KEY],
-    })),
   };
 }
