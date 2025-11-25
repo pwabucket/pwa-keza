@@ -1,6 +1,6 @@
 import toast from "react-hot-toast";
 import { csv2json } from "json-2-csv";
-import { useCallback } from "react";
+import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
 import InnerAppLayout from "../layouts/InnerAppLayout";
@@ -8,9 +8,13 @@ import RestoreIcon from "../assets/images/restore.svg";
 import WalletList from "../components/WalletList";
 import useWallets from "../hooks/useWallets";
 import { cn } from "../lib/utils";
+import type { WalletModule } from "../types/wallet";
+
+import generators from "../wallets";
 
 export default function Restore() {
   const { wallets, expanded, setWallets, setExpanded } = useWallets();
+  const [module, setModule] = useState<WalletModule | null>(null);
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
@@ -32,6 +36,23 @@ export default function Restore() {
             >[];
 
             setWallets(data);
+          }
+
+          /* Detect module from file name */
+          const moduleId = file.name.replace("keza-", "").split("-wallet")[0];
+
+          /* Debug log */
+          console.log("Detected module ID:", moduleId);
+
+          /* Find module */
+          const detectedModule = generators.find((mod) => {
+            return mod.id === moduleId;
+          });
+
+          if (detectedModule) {
+            setModule(detectedModule);
+          } else {
+            setModule(null);
           }
         } catch {
           toast.error("Invalid Backup file!");
@@ -64,12 +85,15 @@ export default function Restore() {
       className="gap-4"
     >
       {wallets.length > 0 ? (
-        <WalletList
-          id={"restored"}
-          wallets={wallets}
-          expanded={expanded}
-          setExpanded={setExpanded}
-        />
+        <div>
+          <WalletList
+            id={"restored"}
+            wallets={wallets}
+            expanded={expanded}
+            setExpanded={setExpanded}
+            getParcelConfig={module?.getParcelConfig}
+          />
+        </div>
       ) : (
         <div
           {...getRootProps()}
