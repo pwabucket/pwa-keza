@@ -80,6 +80,13 @@ export default function WalletList({
           <IoCopyOutline className="size-4" />
         </button>
       </div>
+      <div className="p-4 pt-0">
+        <p className="text-xs text-yellow-400 text-center">
+          ⚠️ Ensure to download and securely store your wallets before closing
+          this page.
+        </p>
+      </div>
+
       <div className="flex flex-col">
         <Virtuoso
           useWindowScroll
