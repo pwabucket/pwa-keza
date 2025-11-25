@@ -5,6 +5,8 @@ import { LuQrCode } from "react-icons/lu";
 import DownloadButton from "./DownloadButton";
 import QRCodeDialog from "./QRCodeDialog";
 import { cn, copyToClipboard } from "../lib/utils";
+import { useId } from "react";
+import useLocationToggle from "../hooks/useLocationToggle";
 
 type WalletInfoContainerProps = {
   expanded: boolean;
@@ -66,34 +68,38 @@ export const WalletInfo = ({
   expanded: boolean;
   title: string;
   value: string;
-}) => (
-  <div className="flex gap-4 p-4 bg-neutral-600 rounded-xl">
-    <div className="flex flex-col gap-1 grow min-w-0 min-h-0">
-      <h2 className="text-neutral-400 font-bold text-xs">{title}</h2>
-      <p
-        className={cn(
-          "font-bold font-mono",
-          expanded ? "break-words" : "truncate"
-        )}
-      >
-        {value}
-      </p>
+}) => {
+  const id = useId();
+  const [showQR, setShowQR] = useLocationToggle(`qr-dialog-${id}`);
+  return (
+    <div className="flex gap-4 p-4 bg-neutral-600 rounded-xl">
+      <div className="flex flex-col gap-1 grow min-w-0 min-h-0">
+        <h2 className="text-neutral-400 font-bold text-xs">{title}</h2>
+        <p
+          className={cn(
+            "font-bold font-mono",
+            expanded ? "break-words" : "truncate"
+          )}
+        >
+          {value}
+        </p>
+      </div>
+      <div className="flex items-center gap-1 shrink-0">
+        <Dialog.Root open={showQR} onOpenChange={setShowQR}>
+          <Dialog.Trigger asChild>
+            <WalletInfoButton>
+              <LuQrCode className="size-4" />
+            </WalletInfoButton>
+          </Dialog.Trigger>
+          <QRCodeDialog title={title} content={value} />
+        </Dialog.Root>
+        <WalletInfoButton
+          className="shrink-0"
+          onClick={() => copyToClipboard(value)}
+        >
+          <IoCopyOutline className="size-4" />
+        </WalletInfoButton>
+      </div>
     </div>
-    <div className="flex items-center gap-1 shrink-0">
-      <Dialog.Root>
-        <Dialog.Trigger asChild>
-          <WalletInfoButton>
-            <LuQrCode className="size-4" />
-          </WalletInfoButton>
-        </Dialog.Trigger>
-        <QRCodeDialog title={title} content={value} />
-      </Dialog.Root>
-      <WalletInfoButton
-        className="shrink-0"
-        onClick={() => copyToClipboard(value)}
-      >
-        <IoCopyOutline className="size-4" />
-      </WalletInfoButton>
-    </div>
-  </div>
-);
+  );
+};

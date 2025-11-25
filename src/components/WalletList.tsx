@@ -12,6 +12,7 @@ import { cn, copyToClipboard } from "../lib/utils";
 import ParcelIcon from "../assets/images/parcel-icon.svg";
 import { ParcelDialog } from "./ParcelDialog";
 import type { GetParcelConfig } from "../types/wallet";
+import useLocationToggle from "../hooks/useLocationToggle";
 
 type WalletListProps = {
   id: string;
@@ -28,11 +29,13 @@ export default function WalletList({
   setExpanded,
   getParcelConfig,
 }: WalletListProps) {
+  const [showParcel, setShowParcel] = useLocationToggle("parcel-dialog");
+  const [showDownload, setShowDownload] = useLocationToggle("download-dialog");
   return (
     <>
       <div className="flex gap-2 sticky top-12 z-30 bg-neutral-800 p-4 -mx-4">
         {getParcelConfig && (
-          <Dialog.Root>
+          <Dialog.Root open={showParcel} onOpenChange={setShowParcel}>
             {/* Parcel Trigger */}
             <Dialog.Trigger
               title="Launch Parcel"
@@ -45,7 +48,7 @@ export default function WalletList({
           </Dialog.Root>
         )}
         {/* Download Button */}
-        <Dialog.Root>
+        <Dialog.Root open={showDownload} onOpenChange={setShowDownload}>
           <Dialog.Trigger
             className={cn(
               "bg-yellow-500 text-black",
