@@ -1,10 +1,9 @@
 import { Dialog } from "radix-ui";
-import { TiDownloadOutline } from "react-icons/ti";
-
 import DownloadDialog from "./DownloadDialog";
+import { TiDownloadOutline } from "react-icons/ti";
 import { cn } from "../lib/utils";
-import useLocationToggle from "../hooks/useLocationToggle";
 import { useId } from "react";
+import { useLocationToggle } from "@pwabucket/pwa-router";
 
 type DownloadButtonProps = {
   data: Record<string, string>[];

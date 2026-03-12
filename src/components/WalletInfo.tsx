@@ -1,12 +1,12 @@
+import { cn, copyToClipboard } from "../lib/utils";
+
 import { Dialog } from "radix-ui";
+import DownloadButton from "./DownloadButton";
 import { IoCopyOutline } from "react-icons/io5";
 import { LuQrCode } from "react-icons/lu";
-
-import DownloadButton from "./DownloadButton";
 import QRCodeDialog from "./QRCodeDialog";
-import { cn, copyToClipboard } from "../lib/utils";
 import { useId } from "react";
-import useLocationToggle from "../hooks/useLocationToggle";
+import { useLocationToggle } from "@pwabucket/pwa-router";
 
 type WalletInfoContainerProps = {
   expanded: boolean;
@@ -35,7 +35,7 @@ export const WalletInfoContainer = ({
       "p-4 rounded-xl bg-neutral-700 flex flex-col gap-2",
       "border border-transparent",
       "hover:border-yellow-500",
-      props.className
+      props.className,
     )}
   >
     <div className="flex px-2 gap-4 items-center">
@@ -78,7 +78,7 @@ export const WalletInfo = ({
         <p
           className={cn(
             "font-bold font-mono",
-            expanded ? "break-all" : "truncate"
+            expanded ? "break-all" : "truncate",
           )}
         >
           {value}

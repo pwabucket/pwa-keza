@@ -1,18 +1,18 @@
-import { Dialog } from "radix-ui";
 import {
   IoChevronDownOutline,
   IoChevronUpOutline,
   IoCopyOutline,
 } from "react-icons/io5";
-import { Virtuoso } from "react-virtuoso";
-
-import DownloadDialog from "./DownloadDialog";
-import { WalletInfoContainer } from "../components/WalletInfo";
 import { cn, copyToClipboard } from "../lib/utils";
-import ParcelIcon from "../assets/images/parcel-icon.svg";
-import { ParcelDialog } from "./ParcelDialog";
+
+import { Dialog } from "radix-ui";
+import DownloadDialog from "./DownloadDialog";
 import type { GetParcelConfig } from "../types/wallet";
-import useLocationToggle from "../hooks/useLocationToggle";
+import { ParcelDialog } from "./ParcelDialog";
+import ParcelIcon from "../assets/images/parcel-icon.svg";
+import { Virtuoso } from "react-virtuoso";
+import { WalletInfoContainer } from "../components/WalletInfo";
+import { useLocationToggle } from "@pwabucket/pwa-router";
 
 type WalletListProps = {
   id: string;
@@ -53,7 +53,7 @@ export default function WalletList({
             className={cn(
               "bg-yellow-500 text-black",
               "px-4 py-2 rounded-xl",
-              "w-full"
+              "w-full",
             )}
           >
             Download All
