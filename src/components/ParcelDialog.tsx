@@ -1,10 +1,11 @@
-import { useEffect } from "react";
-import ParcelIcon from "../assets/images/parcel-icon.svg";
-import { cn } from "../lib/utils";
-import { PopupDialog } from "./PopupDialog";
 import { Dialog } from "radix-ui";
-import { HiOutlineXMark } from "react-icons/hi2";
 import type { GetParcelConfig } from "../types/wallet";
+import { HiOutlineXMark } from "react-icons/hi2";
+import ParcelIcon from "../assets/images/parcel-icon.svg";
+import { PopupDialog } from "./PopupDialog";
+import { cn } from "../lib/utils";
+import { useEffect } from "react";
+import { useLocationIndexUpdater } from "@pwabucket/pwa-router";
 
 /** Parcel URL from Environment Variables */
 const PARCEL_URL = import.meta.env.VITE_PARCEL_URL;
@@ -14,8 +15,8 @@ interface ParcelDialogProps {
   getParcelConfig: GetParcelConfig;
 }
 
-/** Parcel Dialog Component */
-const ParcelDialog = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
+const ParcelApp = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
+  useLocationIndexUpdater("parcel");
   useEffect(() => {
     /** Handle Parcel Ready Message */
     function handleParcelReady(event: MessageEvent) {
@@ -38,7 +39,18 @@ const ParcelDialog = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
   }, [getParcelConfig, wallets]);
 
   return (
-    <PopupDialog className="p-0 h-full max-h-[768px] overflow-hidden gap-0 max-w-md">
+    <iframe
+      src={new URL("/", PARCEL_URL).href}
+      title="Parcel"
+      className="border-0 grow"
+    />
+  );
+};
+
+/** Parcel Dialog Component */
+const ParcelDialog = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
+  return (
+    <PopupDialog className="p-0 h-full max-h-192 overflow-hidden gap-0 max-w-md">
       {/* Header */}
       <div className="flex gap-2 items-center justify-center shrink-0 p-2">
         <div className="size-10 shrink-0" />
@@ -61,7 +73,7 @@ const ParcelDialog = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
             title="Close Parcel"
             className={cn(
               "size-full text-neutral-400 hover:text-yellow-500 cursor-pointer",
-              "flex justify-center items-center"
+              "flex justify-center items-center",
             )}
           >
             <HiOutlineXMark className="size-5" />
@@ -69,12 +81,7 @@ const ParcelDialog = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
         </div>
       </div>
 
-      {/* Iframe */}
-      <iframe
-        src={new URL("/", PARCEL_URL).href}
-        title="Parcel"
-        className="border-0 grow"
-      />
+      <ParcelApp wallets={wallets} getParcelConfig={getParcelConfig} />
     </PopupDialog>
   );
 };

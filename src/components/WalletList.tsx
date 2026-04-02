@@ -4,6 +4,7 @@ import {
   IoCopyOutline,
 } from "react-icons/io5";
 import { cn, copyToClipboard } from "../lib/utils";
+import { useLocationToggle } from "@pwabucket/pwa-router";
 
 import { Dialog } from "radix-ui";
 import DownloadDialog from "./DownloadDialog";
@@ -12,7 +13,6 @@ import { ParcelDialog } from "./ParcelDialog";
 import ParcelIcon from "../assets/images/parcel-icon.svg";
 import { Virtuoso } from "react-virtuoso";
 import { WalletInfoContainer } from "../components/WalletInfo";
-import { useLocationToggle } from "@pwabucket/pwa-router";
 
 type WalletListProps = {
   id: string;
@@ -29,8 +29,12 @@ export default function WalletList({
   setExpanded,
   getParcelConfig,
 }: WalletListProps) {
-  const [showParcel, setShowParcel] = useLocationToggle("parcel-dialog");
+  const [showParcel, setShowParcel] = useLocationToggle(
+    "parcel-dialog",
+    "parcel",
+  );
   const [showDownload, setShowDownload] = useLocationToggle("download-dialog");
+
   return (
     <>
       <div className="flex gap-2 sticky top-12 z-30 bg-neutral-800 p-4 -mx-4">
