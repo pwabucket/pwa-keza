@@ -4,15 +4,17 @@ import {
   IoCopyOutline,
 } from "react-icons/io5";
 import { cn, copyToClipboard } from "../lib/utils";
-import { useLocationToggle } from "@pwabucket/pwa-router";
+import { useMemo, useState } from "react";
 
 import { Dialog } from "radix-ui";
 import DownloadDialog from "./DownloadDialog";
 import type { GetParcelConfig } from "../types/wallet";
+import Input from "./Input";
 import { ParcelDialog } from "./ParcelDialog";
 import ParcelIcon from "../assets/images/parcel-icon.svg";
 import { Virtuoso } from "react-virtuoso";
 import { WalletInfoContainer } from "../components/WalletInfo";
+import { useLocationToggle } from "@pwabucket/pwa-router";
 
 type WalletListProps = {
   id: string;
@@ -29,11 +31,24 @@ export default function WalletList({
   setExpanded,
   getParcelConfig,
 }: WalletListProps) {
+  const [search, setSearch] = useState("");
   const [showParcel, setShowParcel] = useLocationToggle(
     "parcel-dialog",
     "parcel",
   );
   const [showDownload, setShowDownload] = useLocationToggle("download-dialog");
+
+  const filteredWallets = useMemo(
+    () =>
+      search
+        ? wallets.filter((item) =>
+            Object.values(item).some((value) =>
+              value.toLowerCase().includes(search.toLowerCase()),
+            ),
+          )
+        : wallets,
+    [search, wallets],
+  );
 
   return (
     <>
@@ -87,6 +102,8 @@ export default function WalletList({
           <IoCopyOutline className="size-4" />
         </button>
       </div>
+
+      {/* Download warning */}
       <div className="p-4 pt-0">
         <p className="text-xs text-yellow-400 text-center">
           ⚠️ Ensure to download and securely store your wallets before closing
@@ -94,10 +111,25 @@ export default function WalletList({
         </p>
       </div>
 
+      {/* Search */}
+      <div className="flex flex-col mb-4 gap-2">
+        <Input
+          name="search"
+          type="search"
+          placeholder="Search wallets"
+          value={search}
+          onChange={(e) => setSearch(e.target.value)}
+        />
+        <p className="text-center">
+          <span className="font-bold">{search ? "Results" : "Wallets"}:</span>{" "}
+          {filteredWallets.length}
+        </p>
+      </div>
+
       <div className="flex flex-col">
         <Virtuoso
           useWindowScroll
-          data={wallets}
+          data={filteredWallets}
           itemContent={(index, wallet) => (
             <div className="pb-4">
               <WalletInfoContainer
