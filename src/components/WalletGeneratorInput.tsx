@@ -1,8 +1,8 @@
 import { HiOutlineChevronLeft, HiOutlineChevronRight } from "react-icons/hi2";
 
 import Input from "./Input";
-import { cn } from "../lib/utils";
 import LabelToggle from "./LabelToggle";
+import { cn } from "../lib/utils";
 
 type WalletGeneratorInputProps = {
   generate: () => void;
@@ -19,7 +19,7 @@ const NumberInputButton = (props: React.ComponentProps<"button">) => (
     className={cn(
       "bg-neutral-700",
       "flex items-center justify-center",
-      "p-1 px-3 rounded-lg"
+      "p-1 px-3 rounded-lg",
     )}
   />
 );
@@ -36,6 +36,7 @@ export default function WalletGeneratorInput({
     <div className="flex flex-col gap-2">
       <div className="flex gap-2">
         <Input
+          name="count"
           placeholder="Count"
           value={count}
           onChange={(ev) => setCount(ev.target.value)}
