@@ -21,3 +21,5 @@ export async function generateSolanaWallet(): Promise<SolanaWalletResult> {
     [SolanaWallet.SECRET_KEY]: Buffer.from(key.secretKey).toString("hex"),
   };
 }
+
+export default generateSolanaWallet;

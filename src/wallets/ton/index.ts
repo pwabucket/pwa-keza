@@ -1,7 +1,6 @@
 import type { WalletModule } from "../../types/wallet";
 import { TONWallet } from "./constants";
 import Icon from "./icon.svg";
-import Worker from "./worker?worker";
 
 export default {
   id: "ton",
@@ -9,7 +8,6 @@ export default {
   icon: Icon,
   tags: ["TON", "NOT", "DOGS"],
   supportsTestnet: true,
-  worker: Worker,
   getParcelConfig(wallets, { version = 5 }: { version?: number } = {}) {
     return {
       group: "ton",
@@ -32,4 +30,4 @@ export default {
             })),
     };
   },
-} as WalletModule;
+} satisfies WalletModule;

@@ -10,8 +10,7 @@ import useWallets from "../hooks/useWallets";
 import { cn } from "../lib/utils";
 import { parseBackup } from "../lib/backup";
 import type { WalletModule } from "../types/wallet";
-
-import generators from "../wallets";
+import { walletModulesById } from "../wallets/registry";
 
 export default function Restore() {
   const { wallets, expanded, setWallets, setExpanded } = useWallets();
@@ -38,9 +37,7 @@ export default function Restore() {
       const moduleId = file.name.replace("keza-", "").split("-wallet")[0];
 
       /* Find module */
-      const detectedModule = generators.find((mod) => {
-        return mod.id === moduleId;
-      });
+      const detectedModule = walletModulesById.get(moduleId);
 
       if (detectedModule) {
         setModule(detectedModule);

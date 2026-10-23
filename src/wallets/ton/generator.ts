@@ -42,3 +42,5 @@ export async function generateTONWallet({
     [TONWallet.PHRASE]: mnemonic.join(" "),
   };
 }
+
+export default generateTONWallet;

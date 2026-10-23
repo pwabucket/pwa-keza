@@ -23,3 +23,5 @@ export async function generateTronWallet(): Promise<TronWalletResult> {
     [TronWallet.PHRASE]: account.mnemonic?.phrase || "",
   };
 }
+
+export default generateTronWallet;

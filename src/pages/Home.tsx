@@ -4,7 +4,7 @@ import AppContainer from "../layouts/AppContainer";
 import AppIcon from "../assets/images/icon.svg";
 import RestoreIcon from "../assets/images/restore.svg";
 import { cn } from "../lib/utils";
-import wallets from "../wallets";
+import { walletModules } from "../wallets/registry";
 
 const PageLink = ({
   path,
@@ -93,9 +93,9 @@ export default function Home() {
         </p>
       </div>
       <div className="flex flex-col gap-2">
-        {wallets.map((item, index) => (
+        {walletModules.map((item) => (
           <PageLink
-            key={index}
+            key={item.id}
             title={item.title}
             icon={item.icon}
             path={`/generator/${item.id}`}

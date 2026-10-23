@@ -20,3 +20,5 @@ export async function generateStellarWallet(): Promise<StellarWalletResult> {
     [StellarWallet.SECRET_KEY]: key.secret(),
   };
 }
+
+export default generateStellarWallet;

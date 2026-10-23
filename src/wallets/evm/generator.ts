@@ -15,3 +15,5 @@ export async function generateEVMWallet(): Promise<EVMWalletResult> {
     [EVMWallet.PHRASE]: wallet.mnemonic?.phrase as string,
   };
 }
+
+export default generateEVMWallet;

@@ -1,16 +1,14 @@
-export type WorkerConstructor = new () => Worker;
+/** One wallet: field label to value, in display order */
+export type WalletRow = Record<string, string>;
 
 export interface WalletGeneratorOptions {
   testnet?: boolean;
 }
 
-export type WorkerAPI<Result extends Record<string, string>> = {
-  generate: (options: WalletGeneratorOptions) => Promise<Result>;
-  generateBatch: (
-    count: number,
-    options: WalletGeneratorOptions
-  ) => Promise<Result[]>;
-};
+/** Generates one wallet; each module's generator.ts default-exports one */
+export type WalletGenerator = (
+  options: WalletGeneratorOptions,
+) => Promise<WalletRow>;
 
 export type WalletResult<T extends Record<string, string>> = Record<
   T[keyof T],
@@ -18,13 +16,7 @@ export type WalletResult<T extends Record<string, string>> = Record<
 >;
 
 export interface GetParcelConfig {
-  (wallets: Record<string, string>[], options?: Record<string, unknown>): any;
-}
-
-export interface GenerateWallet {
-  (count: number, options: WalletGeneratorOptions): Promise<
-    Record<string, string>[]
-  >;
+  (wallets: WalletRow[], options?: Record<string, unknown>): any;
 }
 
 export interface WalletModule {
@@ -34,9 +26,5 @@ export interface WalletModule {
   tags: string[];
   defaultExpanded?: boolean;
   supportsTestnet?: boolean;
-  worker: new (options?: { name?: string }) => Worker;
-  getParcelConfig: (
-    wallets: Record<string, string>[],
-    options?: Record<string, unknown>
-  ) => Record<string, unknown>;
+  getParcelConfig?: GetParcelConfig;
 }

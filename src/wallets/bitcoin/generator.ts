@@ -74,3 +74,5 @@ export async function generateBitcoinWallet(): Promise<BitcoinWalletResult> {
     [BitcoinWallet.PRIVATE_KEY]: taproot.toWIF(),
   };
 }
+
+export default generateBitcoinWallet;

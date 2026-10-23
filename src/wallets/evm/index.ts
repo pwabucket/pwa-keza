@@ -1,14 +1,12 @@
 import type { WalletModule } from "../../types/wallet";
 import { EVMWallet } from "./constants";
 import Icon from "./icon.svg";
-import Worker from "./worker?worker";
 
 export default {
   id: "evm",
   title: "EVM Wallets",
   icon: Icon,
   tags: ["ETH", "BNB", "POL"],
-  worker: Worker,
   getParcelConfig(wallets: Record<string, string>[]) {
     return {
       group: "evm",
@@ -19,4 +17,4 @@ export default {
       })),
     };
   },
-} as WalletModule;
+} satisfies WalletModule;
