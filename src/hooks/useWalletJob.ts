@@ -1,7 +1,7 @@
 import * as Comlink from "comlink";
 import { useCallback, useEffect, useRef, useState } from "react";
 
-import useFrameBuffer from "./useFrameBuffer";
+import useBatchedBuffer from "./useBatchedBuffer";
 import useSession from "./useSession";
 import {
   type ChunkHandler,
@@ -46,7 +46,7 @@ export default function useWalletJob(moduleId: string) {
     (rows: WalletRow[]) => setRows(rows, unsavedRef.current),
     [setRows],
   );
-  const { push, flush, reset, getSize } = useFrameBuffer(commitRows);
+  const { push, flush, reset, getSize } = useBatchedBuffer(commitRows);
   const [status, setStatus] = useState<JobStatus>(JobStatus.IDLE);
   const [progress, setProgress] = useState<JobProgress>({
     total: 0,
@@ -134,8 +134,19 @@ export default function useWalletJob(moduleId: string) {
     [moduleId, run],
   );
 
-  /* Leaving the page stops a running job */
-  useEffect(() => () => abortRef.current?.abort(), []);
+  /*
+   * Leaving the page stops a running job. So does hiding it for the
+   * back/forward cache, where the pool terminates its workers.
+   */
+  useEffect(() => {
+    const abort = () => abortRef.current?.abort();
+
+    window.addEventListener("pagehide", abort);
+    return () => {
+      window.removeEventListener("pagehide", abort);
+      abort();
+    };
+  }, []);
 
   return { status, progress, generate, derive, cancel };
 }

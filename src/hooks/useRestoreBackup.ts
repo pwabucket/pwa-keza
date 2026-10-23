@@ -53,7 +53,7 @@ export default function useRestoreBackup() {
   );
 
   const decrypt = useCallback(
-    async (password: string) => {
+    async (password: string, signal: AbortSignal) => {
       if (!pending) return;
 
       let payload;
@@ -63,6 +63,8 @@ export default function useRestoreBackup() {
       } catch {
         throw new Error("Wrong password, or the file is damaged.");
       }
+
+      if (signal.aborted) return;
 
       setPending(null);
       setIsAskingPassword(false);

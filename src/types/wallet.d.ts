@@ -61,6 +61,15 @@ export interface VanityCandidate {
 /** Makes one vanity candidate; vanity modules' generator.ts export one */
 export type VanityGenerator = () => Promise<VanityCandidate>;
 
+/**
+ * The number a base58 address encodes: `bytes` random bytes, optionally
+ * with a fixed first byte. Used to work out how likely a prefix is.
+ */
+export interface Base58Range {
+  bytes: number;
+  leadingByte?: number;
+}
+
 export interface VanityCapability {
   /** Label of the address field that is matched */
   field: string;
@@ -71,6 +80,8 @@ export interface VanityCapability {
   /** Characters that can come first after the fixed prefix, when limited */
   firstCharacters?: string;
   letterCase: LetterCase;
+  /** Base58 addresses whose first characters aren't equally likely */
+  base58Range?: Base58Range;
 }
 
 export interface WalletModuleDefinition {

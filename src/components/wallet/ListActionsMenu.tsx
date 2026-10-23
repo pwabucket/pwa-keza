@@ -1,5 +1,6 @@
 import { DropdownMenu } from "radix-ui";
 import { HiOutlineCheck, HiOutlineEllipsisVertical } from "react-icons/hi2";
+import { useEffect } from "react";
 import { useLocationToggle } from "@pwabucket/pwa-router";
 
 import IconButton from "../ui/IconButton";
@@ -12,8 +13,13 @@ const ITEM_CLASS = cn(
 );
 
 /** Menu holding the list actions on narrow toolbars */
-export default function ListActionsMenu({ className }: { className?: string }) {
+export default function ListActionsMenu({ hidden }: { hidden: boolean }) {
   const [isOpen, setIsOpen] = useLocationToggle("wallet-list-menu");
+
+  /* The toolbar grew wide enough to show the actions inline */
+  useEffect(() => {
+    if (hidden && isOpen) setIsOpen(false);
+  }, [hidden, isOpen, setIsOpen]);
   const {
     expanded,
     revealAll,
@@ -28,7 +34,10 @@ export default function ListActionsMenu({ className }: { className?: string }) {
       <DropdownMenu.Trigger asChild>
         <IconButton
           label="More actions"
-          className={cn("bg-neutral-600 px-3 py-2 rounded-xl", className)}
+          className={cn(
+            "bg-neutral-600 px-3 py-2 rounded-xl",
+            hidden && "hidden",
+          )}
         >
           <HiOutlineEllipsisVertical className="size-4" />
         </IconButton>

@@ -101,51 +101,75 @@ async function getSeed(
   return bip39.mnemonicToSeed(mnemonic, passphrase);
 }
 
+/**
+ * Closes the message channel of a callback passed in with Comlink.proxy, so
+ * neither side keeps it open after the job.
+ */
+function releaseCallback(callback: unknown) {
+  (callback as Comlink.Remote<unknown>)[Comlink.releaseProxy]();
+}
+
 const api: WalletWorkerAPI = {
   async generate({ moduleId, count, options }, onChunk) {
-    const generate = await loadExport(generators, moduleId);
+    try {
+      const generate = await loadExport(generators, moduleId);
 
-    await streamRows(count, () => generate(options), onChunk);
+      await streamRows(count, () => generate(options), onChunk);
+    } finally {
+      releaseCallback(onChunk);
+    }
   },
 
   async derive(job, onChunk) {
-    const derive = await loadExport(derivers, job.moduleId);
-    const seed = await getSeed(job.mnemonic, job.passphrase, job.mnemonicType);
+    try {
+      const derive = await loadExport(derivers, job.moduleId);
+      const seed = await getSeed(
+        job.mnemonic,
+        job.passphrase,
+        job.mnemonicType,
+      );
 
-    await streamRows(
-      job.count,
-      (offset) =>
-        derive({
-          mnemonic: job.mnemonic,
-          seed,
-          index: job.start + offset,
-          pathTemplate: job.pathTemplate,
-          testnet: job.testnet,
-        }),
-      onChunk,
-    );
+      await streamRows(
+        job.count,
+        (offset) =>
+          derive({
+            mnemonic: job.mnemonic,
+            seed,
+            index: job.start + offset,
+            pathTemplate: job.pathTemplate,
+            testnet: job.testnet,
+          }),
+        onChunk,
+      );
+    } finally {
+      releaseCallback(onChunk);
+    }
   },
 
   async vanity({ moduleId, matcher }, onAttempts) {
-    const createCandidate = await loadExport(vanityGenerators, moduleId);
-    let attempts = 0;
-    let lastReport = performance.now();
+    try {
+      const createCandidate = await loadExport(vanityGenerators, moduleId);
+      let attempts = 0;
+      let lastReport = performance.now();
 
-    for (;;) {
-      const candidate = await createCandidate();
-      attempts++;
+      for (;;) {
+        const candidate = await createCandidate();
+        attempts++;
 
-      if (matchesVanity(candidate.address, matcher)) {
-        onAttempts(attempts);
-        return candidate.toRow();
+        if (matchesVanity(candidate.address, matcher)) {
+          onAttempts(attempts);
+          return candidate.toRow();
+        }
+
+        if (performance.now() - lastReport >= ATTEMPTS_INTERVAL) {
+          /* Not awaited, so reporting never slows the search */
+          onAttempts(attempts);
+          attempts = 0;
+          lastReport = performance.now();
+        }
       }
-
-      if (performance.now() - lastReport >= ATTEMPTS_INTERVAL) {
-        /* Not awaited, so reporting never slows the search */
-        onAttempts(attempts);
-        attempts = 0;
-        lastReport = performance.now();
-      }
+    } finally {
+      releaseCallback(onAttempts);
     }
   },
 };

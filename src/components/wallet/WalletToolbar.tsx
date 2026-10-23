@@ -1,16 +1,22 @@
 import { TiDownloadOutline } from "react-icons/ti";
-import { memo, useCallback } from "react";
+import { memo, useCallback, useRef } from "react";
 
 import ListActionButtons from "./ListActionButtons";
 import ListActionsMenu from "./ListActionsMenu";
 import ParcelButton from "./ParcelButton";
+import useElementWidth from "../../hooks/useElementWidth";
 import useSession from "../../hooks/useSession";
 import useWalletDialogs from "../../hooks/useWalletDialogs";
 import { PARCEL_URL } from "../../lib/parcel";
 import { cn } from "../../lib/utils";
 
+/** Toolbar width (24rem) from which the list actions fit inline */
+const INLINE_ACTIONS_WIDTH = 384;
+
 /** Sticky actions for the whole wallet list */
 export default memo(function WalletToolbar() {
+  const toolbarRef = useRef<HTMLDivElement>(null);
+  const isWide = useElementWidth(toolbarRef) >= INLINE_ACTIONS_WIDTH;
   const getParcelConfig = useSession((state) => state.module?.getParcelConfig);
   const { openDownload } = useWalletDialogs();
 
@@ -18,6 +24,7 @@ export default memo(function WalletToolbar() {
 
   return (
     <div
+      ref={toolbarRef}
       className={cn(
         "@container flex gap-2 sticky z-30 bg-neutral-800 p-4 -mx-4",
         "top-[calc(3rem+env(safe-area-inset-top))]",
@@ -45,8 +52,8 @@ export default memo(function WalletToolbar() {
       </button>
 
       {/* Inline when the toolbar is wide enough, in a menu otherwise */}
-      <ListActionButtons className="hidden @sm:flex" />
-      <ListActionsMenu className="@sm:hidden" />
+      <ListActionButtons className={isWide ? "flex" : "hidden"} />
+      <ListActionsMenu hidden={isWide} />
     </div>
   );
 });

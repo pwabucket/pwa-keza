@@ -1,15 +1,21 @@
 import { useCallback, useEffect, useRef } from "react";
 
 /**
- * Collects items pushed at any rate and hands the full list to `onCommit`
- * at most once per animation frame.
+ * How often buffered items are committed, in milliseconds. Each commit
+ * copies the whole list, so committing less often keeps large jobs cheap.
  */
-export default function useFrameBuffer<T>(onCommit: (items: T[]) => void) {
+const COMMIT_INTERVAL = 200;
+
+/**
+ * Collects items pushed at any rate and hands the full list to `onCommit`
+ * at most once per interval.
+ */
+export default function useBatchedBuffer<T>(onCommit: (items: T[]) => void) {
   const bufferRef = useRef<T[]>([]);
-  const frameRef = useRef(0);
+  const timerRef = useRef(0);
 
   const commit = useCallback(() => {
-    frameRef.current = 0;
+    timerRef.current = 0;
     onCommit(bufferRef.current.slice());
   }, [onCommit]);
 
@@ -17,22 +23,22 @@ export default function useFrameBuffer<T>(onCommit: (items: T[]) => void) {
     (chunk: T[]) => {
       bufferRef.current.push(...chunk);
 
-      if (!frameRef.current) {
-        frameRef.current = requestAnimationFrame(commit);
+      if (!timerRef.current) {
+        timerRef.current = window.setTimeout(commit, COMMIT_INTERVAL);
       }
     },
     [commit],
   );
 
-  /** Commits anything still waiting for a frame */
+  /** Commits anything still waiting for the interval */
   const flush = useCallback(() => {
-    cancelAnimationFrame(frameRef.current);
+    window.clearTimeout(timerRef.current);
     commit();
   }, [commit]);
 
   /** Empties the buffer and commits the empty list */
   const reset = useCallback(() => {
-    cancelAnimationFrame(frameRef.current);
+    window.clearTimeout(timerRef.current);
     bufferRef.current = [];
     commit();
   }, [commit]);
@@ -40,7 +46,7 @@ export default function useFrameBuffer<T>(onCommit: (items: T[]) => void) {
   /** Number of items pushed so far, including uncommitted ones */
   const getSize = useCallback(() => bufferRef.current.length, []);
 
-  useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
+  useEffect(() => () => window.clearTimeout(timerRef.current), []);
 
   return { push, flush, reset, getSize };
 }

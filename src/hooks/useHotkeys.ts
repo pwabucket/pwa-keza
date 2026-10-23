@@ -12,9 +12,12 @@ function isTyping(target: EventTarget | null) {
   );
 }
 
+/** Open layers whose keys must not trigger page shortcuts */
+const OPEN_LAYER_SELECTOR = "[role=dialog], [role=menu]";
+
 /**
  * Runs an action when its key is pressed outside of text fields and without
- * modifiers. Open dialogs keep their own keys.
+ * modifiers. Open dialogs and menus keep their own keys.
  */
 export default function useHotkeys(hotkeys: Hotkeys) {
   const hotkeysRef = useRef(hotkeys);
@@ -25,9 +28,10 @@ export default function useHotkeys(hotkeys: Hotkeys) {
 
   useEffect(() => {
     function handleKeyDown(event: KeyboardEvent) {
+      if (event.defaultPrevented) return;
       if (event.ctrlKey || event.metaKey || event.altKey) return;
       if (isTyping(event.target)) return;
-      if (document.querySelector("[role=dialog]")) return;
+      if (document.querySelector(OPEN_LAYER_SELECTOR)) return;
 
       const action = hotkeysRef.current[event.key];
 

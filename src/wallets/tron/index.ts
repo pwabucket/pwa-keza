@@ -16,6 +16,7 @@ export default defineWalletModule({
     alphabet: BASE58_ALPHABET,
     firstCharacters: "9ABCDEFGHJKLMNPQRSTUVWXYZ",
     letterCase: LetterCase.MIXED,
+    base58Range: { bytes: 25, leadingByte: 0x41 },
   },
   derive: {
     mnemonic: MnemonicType.BIP39,

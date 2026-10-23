@@ -118,8 +118,19 @@ export default function useVanitySearch(moduleId: string) {
     [moduleId, store, setRows, ownsRows],
   );
 
-  /* Leaving the page stops a running search */
-  useEffect(() => () => abortRef.current?.abort(), []);
+  /*
+   * Leaving the page stops a running search. So does hiding it for the
+   * back/forward cache, where the pool terminates its workers.
+   */
+  useEffect(() => {
+    const abort = () => abortRef.current?.abort();
+
+    window.addEventListener("pagehide", abort);
+    return () => {
+      window.removeEventListener("pagehide", abort);
+      abort();
+    };
+  }, []);
 
   return { status, stats, search, stop, ownsRows };
 }

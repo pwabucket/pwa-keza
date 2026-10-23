@@ -56,7 +56,6 @@ export default memo(function JobProgress({
       </div>
       <p
         className="flex flex-wrap justify-between gap-x-2 text-xs text-neutral-300"
-        aria-live="polite"
       >
         <span>
           {numberFormat.format(done)} / {numberFormat.format(total)}

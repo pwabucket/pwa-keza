@@ -24,6 +24,8 @@ export interface WalletField {
   optional?: boolean;
   /** Shape of a valid value, used to recognise a module's backups */
   pattern?: RegExp;
+  /** Shown under the label, e.g. which address a key belongs to */
+  note?: string;
 }
 
 /** A space-separated phrase of exactly `words` lowercase words */

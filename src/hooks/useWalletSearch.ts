@@ -1,12 +1,6 @@
-import { useDeferredValue, useMemo, useState } from "react";
+import { useCallback, useDeferredValue, useMemo, useState } from "react";
 
 import type { WalletRow } from "../types/wallet";
-
-export interface WalletEntry {
-  /** Position in the full list, kept when the list is filtered */
-  index: number;
-  row: WalletRow;
-}
 
 /* Rows keep their identity while the list grows, so each is lowercased once */
 const searchTextCache = new WeakMap<WalletRow, string>();
@@ -23,19 +17,33 @@ function getSearchText(row: WalletRow) {
   return text;
 }
 
-/** Filters wallets by any of their values, keeping each wallet's position */
+/**
+ * Filters wallets by any of their values. Returns the positions of the
+ * matching wallets, or null when there is no query and every wallet shows.
+ */
 export default function useWalletSearch(rows: WalletRow[]) {
   const [query, setQuery] = useState("");
   const deferredQuery = useDeferredValue(query);
 
-  const entries = useMemo<WalletEntry[]>(() => {
+  const handleQueryChange = useCallback(
+    (event: React.ChangeEvent<HTMLInputElement>) =>
+      setQuery(event.target.value),
+    [],
+  );
+
+  const matches = useMemo<number[] | null>(() => {
     const needle = deferredQuery.trim().toLowerCase();
-    const all = rows.map((row, index) => ({ row, index }));
 
-    if (!needle) return all;
+    if (!needle) return null;
 
-    return all.filter(({ row }) => getSearchText(row).includes(needle));
+    const found: number[] = [];
+
+    rows.forEach((row, index) => {
+      if (getSearchText(row).includes(needle)) found.push(index);
+    });
+
+    return found;
   }, [rows, deferredQuery]);
 
-  return { query, setQuery, entries };
+  return { query, handleQueryChange, matches };
 }

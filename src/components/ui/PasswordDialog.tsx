@@ -1,5 +1,5 @@
 import { Dialog } from "radix-ui";
-import { useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 import Input from "../Input";
 import { PopupDialog } from "../PopupDialog";
@@ -13,8 +13,11 @@ type PasswordDialogProps = {
   /** Asks for the password twice, for choosing a new one */
   confirm?: boolean;
   minLength?: number;
-  /** Throws to show its message under the form */
-  onSubmit: (password: string) => Promise<void>;
+  /**
+   * Throws to show its message under the form. The signal aborts when the
+   * dialog closes, so a late result can be dropped.
+   */
+  onSubmit: (password: string, signal: AbortSignal) => Promise<void>;
   onCancel: () => void;
 };
 
@@ -44,6 +47,10 @@ function PasswordForm({
   const [confirmation, setConfirmation] = useState("");
   const [error, setError] = useState<string | null>(null);
   const [isBusy, setIsBusy] = useState(false);
+  const abortRef = useRef<AbortController | null>(null);
+
+  /* Closing the dialog cancels the action still running */
+  useEffect(() => () => abortRef.current?.abort(), []);
 
   async function handleSubmit(event: React.FormEvent) {
     event.preventDefault();
@@ -58,15 +65,20 @@ function PasswordForm({
       return;
     }
 
+    const controller = new AbortController();
+    abortRef.current = controller;
+
     setError(null);
     setIsBusy(true);
 
     try {
-      await onSubmit(password);
+      await onSubmit(password, controller.signal);
     } catch (err) {
-      setError(err instanceof Error ? err.message : String(err));
+      if (!controller.signal.aborted) {
+        setError(err instanceof Error ? err.message : String(err));
+      }
     } finally {
-      setIsBusy(false);
+      if (!controller.signal.aborted) setIsBusy(false);
     }
   }
 

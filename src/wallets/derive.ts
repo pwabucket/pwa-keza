@@ -18,7 +18,7 @@ export const CUSTOM_PRESET_ID = "custom";
 const PATH_PATTERN = /^m(\/\d+'?)+$/;
 
 /** Largest BIP32 index before the hardened range */
-const MAX_INDEX = 2 ** 31 - 1;
+export const MAX_INDEX = 2 ** 31 - 1;
 
 /** Fills {name} placeholders; unknown ones are left as they are */
 export function resolvePath(

@@ -50,7 +50,7 @@ export default function DownloadDialog({
   filename: string;
   /** Stored inside encrypted backups, so Restore knows the wallet type */
   moduleId: string | null;
-  /** Called after the data has been handed off for saving */
+  /** Called after a file with the data has been downloaded */
   onExport?: () => void;
 }) {
   const download = useCallback(
@@ -84,17 +84,18 @@ export default function DownloadDialog({
         type: "text/plain",
         lastModified: Date.now(),
       }),
-      onHandoff: onExport,
     });
-  }, [filename, data, onExport]);
+  }, [filename, data]);
 
   const [isEncrypting, setIsEncrypting] = useLocationToggle(
     "encrypt-password"
   );
 
   const encryptWithPassword = useCallback(
-    async (password: string) => {
+    async (password: string, signal: AbortSignal) => {
       const envelope = await encryptBackup({ moduleId, rows: data }, password);
+
+      if (signal.aborted) return;
 
       exportFromJSON({
         data: envelope,

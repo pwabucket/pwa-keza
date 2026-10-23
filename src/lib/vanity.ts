@@ -1,4 +1,5 @@
 import { LetterCase } from "../wallets/vanity";
+import { base58PrefixChance } from "./base58Chance";
 import type { VanityCapability } from "../types/wallet";
 
 /** Longest prefix plus suffix accepted, beyond which a search is hopeless */
@@ -84,6 +85,18 @@ export function getVanityError(
       : `Addresses can only start with ${allowed}.`;
   }
 
+  if (
+    prefix &&
+    capability.base58Range &&
+    base58PrefixChance(
+      capability.fixedPrefix + prefix,
+      capability.base58Range,
+      ignoreCase,
+    ) === 0
+  ) {
+    return `No address can start with ${capability.fixedPrefix}${prefix}.`;
+  }
+
   return null;
 }
 
@@ -119,6 +132,28 @@ export function getVanityDifficulty(
   const prefix = normalizeText(capability, pattern.prefix);
   const suffix = normalizeText(capability, pattern.suffix);
   const ignoreCase = ignoresCase(capability, pattern);
+
+  return (
+    1 /
+    (getPrefixChance(capability, prefix, ignoreCase) *
+      getSuffixChance(capability, suffix, ignoreCase))
+  );
+}
+
+/** Chance that a random address starts with the user's prefix */
+function getPrefixChance(
+  capability: VanityCapability,
+  prefix: string,
+  ignoreCase: boolean,
+) {
+  if (capability.base58Range) {
+    return base58PrefixChance(
+      capability.fixedPrefix + prefix,
+      capability.base58Range,
+      ignoreCase,
+    );
+  }
+
   let chance = 1;
 
   [...prefix].forEach((char, index) => {
@@ -129,11 +164,22 @@ export function getVanityDifficulty(
     chance *= matchChance(char, characters, ignoreCase);
   });
 
+  return chance;
+}
+
+/** Chance that a random address ends with the suffix; endings are uniform */
+function getSuffixChance(
+  capability: VanityCapability,
+  suffix: string,
+  ignoreCase: boolean,
+) {
+  let chance = 1;
+
   for (const char of suffix) {
     chance *= matchChance(char, capability.alphabet, ignoreCase);
   }
 
-  return 1 / chance;
+  return chance;
 }
 
 /** Seconds until there's an even chance of a match at a given rate */

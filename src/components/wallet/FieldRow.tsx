@@ -1,7 +1,7 @@
 import { HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2";
 import { IoCopyOutline } from "react-icons/io5";
 import { LuQrCode } from "react-icons/lu";
-import { memo, useState } from "react";
+import { memo, useCallback, useState } from "react";
 
 import IconButton from "../ui/IconButton";
 import MaskedValue from "./MaskedValue";
@@ -19,6 +19,7 @@ type FieldRowProps = {
   /** Hidden until revealed, and cleared from the clipboard after copying */
   secret: boolean;
   revealAll: boolean;
+  note?: string;
 };
 
 /** One labelled value of a wallet, with QR and copy buttons */
@@ -29,6 +30,7 @@ export default memo(function FieldRow({
   expanded,
   secret,
   revealAll,
+  note,
 }: FieldRowProps) {
   const { openField } = useWalletDialogs();
 
@@ -39,6 +41,16 @@ export default memo(function FieldRow({
   /* e.g. the phrase of a vanity wallet, which has none */
   const isEmpty = value === "";
 
+  const toggleRevealed = useCallback(() => setIsRevealed((prev) => !prev), []);
+  const showQRCode = useCallback(
+    () => openField(index, label),
+    [openField, index, label],
+  );
+  const copyValue = useCallback(
+    () => copyToClipboard(value, { secret }),
+    [value, secret],
+  );
+
   return (
     <div className="@container bg-neutral-600 rounded-xl">
       {/* Buttons move below the value when the row is narrow */}
@@ -47,6 +59,7 @@ export default memo(function FieldRow({
           <h3 className="text-neutral-300 font-bold text-xs wrap-break-word">
             {label}
           </h3>
+          {note ? <p className="text-xs text-neutral-400">{note}</p> : null}
           {isEmpty ? (
             <p className="text-neutral-400 italic">None</p>
           ) : (
@@ -67,7 +80,7 @@ export default memo(function FieldRow({
             <IconButton
               label={isRevealed ? `Hide ${label}` : `Reveal ${label}`}
               aria-pressed={isRevealed}
-              onClick={() => setIsRevealed((prev) => !prev)}
+              onClick={toggleRevealed}
               className={FIELD_BUTTON_CLASS}
             >
               {isRevealed ? (
@@ -79,14 +92,14 @@ export default memo(function FieldRow({
           ) : null}
           <IconButton
             label={`Show ${label} QR code`}
-            onClick={() => openField(index, label)}
+            onClick={showQRCode}
             className={FIELD_BUTTON_CLASS}
           >
             <LuQrCode className="size-4" />
           </IconButton>
           <IconButton
             label={`Copy ${label}`}
-            onClick={() => copyToClipboard(value, { secret })}
+            onClick={copyValue}
             className={FIELD_BUTTON_CLASS}
           >
             <IoCopyOutline className="size-4" />

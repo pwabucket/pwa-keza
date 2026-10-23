@@ -3,6 +3,7 @@ import { useCallback, useMemo, useState } from "react";
 
 import {
   CUSTOM_PRESET_ID,
+  MAX_INDEX,
   MnemonicType,
   isValidPath,
   normalizeMnemonic,
@@ -14,6 +15,9 @@ import type { WalletModule } from "../types/wallet";
 
 /** Most accounts derived in one go */
 export const MAX_DERIVE_COUNT = 1000;
+
+/** Sample values for checking a custom path's placeholders */
+const SAMPLE_PATH_VALUES = { purpose: 44, coin: 0, i: 0 };
 
 /** Word counts a valid phrase can have */
 const BIP39_WORD_COUNTS: ReadonlySet<number> = new Set([12, 15, 18, 21, 24]);
@@ -44,7 +48,10 @@ function getFormError({
 
   if (isTon) return null;
 
-  if (customPath !== null && !isValidPath(resolvePath(customPath, { i: 0 }))) {
+  if (
+    customPath !== null &&
+    !isValidPath(resolvePath(customPath, SAMPLE_PATH_VALUES))
+  ) {
     return "Enter a derivation path such as m/44'/60'/0'/0/{i}.";
   }
 
@@ -54,6 +61,15 @@ function getFormError({
 
   if (count === null || count < 1 || count > MAX_DERIVE_COUNT) {
     return `Derive between 1 and ${MAX_DERIVE_COUNT} accounts.`;
+  }
+
+  if (start + count - 1 > MAX_INDEX) {
+    return `Account indexes can't go past ${MAX_INDEX}.`;
+  }
+
+  /* Without {i} every account would be the same one */
+  if (customPath !== null && count > 1 && !customPath.includes("{i}")) {
+    return "Add {i} to the path where the account number goes, or derive 1 account.";
   }
 
   return null;

@@ -1,6 +1,6 @@
 import { IoCopyOutline } from "react-icons/io5";
 import { TiDownloadOutline } from "react-icons/ti";
-import { memo } from "react";
+import { memo, useCallback } from "react";
 
 import FieldRow from "./FieldRow";
 import IconButton from "../ui/IconButton";
@@ -8,6 +8,7 @@ import useWalletDialogs from "../../hooks/useWalletDialogs";
 import { cn } from "../../lib/utils";
 import { copyToClipboard } from "../../lib/clipboard";
 import { isSecretLabel } from "../../wallets/secrets";
+import type { WalletField } from "../../wallets/fields";
 import type { WalletRow } from "../../types/wallet";
 
 const CARD_BUTTON_CLASS = "bg-neutral-600 p-2.5 rounded-xl";
@@ -19,6 +20,8 @@ type WalletCardProps = {
   expanded: boolean;
   /** Labels of secret fields; null when unknown, so every field counts */
   secretLabels: ReadonlySet<string> | null;
+  /** The module's fields by label; null when the module is unknown */
+  fields: ReadonlyMap<string, WalletField> | null;
   revealAll: boolean;
 };
 
@@ -28,10 +31,20 @@ export default memo(function WalletCard({
   row,
   expanded,
   secretLabels,
+  fields,
   revealAll,
 }: WalletCardProps) {
   const { openDownload } = useWalletDialogs();
   const title = `Wallet ${index + 1}`;
+
+  const copyWallet = useCallback(
+    () => copyToClipboard(JSON.stringify(row, null, 2), { secret: true }),
+    [row],
+  );
+  const downloadWallet = useCallback(
+    () => openDownload(index),
+    [openDownload, index],
+  );
 
   return (
     <div
@@ -41,7 +54,6 @@ export default memo(function WalletCard({
         "hover:border-yellow-500",
       )}
     >
-      {/* The buttons wrap below the title when both don't fit */}
       <div className="flex flex-wrap px-2 gap-2 items-center">
         <h2 className="text-lg font-extralight grow min-w-0 wrap-break-word">
           {title}
@@ -50,16 +62,14 @@ export default memo(function WalletCard({
         <div className="flex shrink-0 gap-2 ml-auto">
           <IconButton
             label={`Copy ${title}`}
-            onClick={() =>
-              copyToClipboard(JSON.stringify(row, null, 2), { secret: true })
-            }
+            onClick={copyWallet}
             className={CARD_BUTTON_CLASS}
           >
             <IoCopyOutline className="size-4" />
           </IconButton>
           <IconButton
             label={`Download ${title}`}
-            onClick={() => openDownload(index)}
+            onClick={downloadWallet}
             className={CARD_BUTTON_CLASS}
           >
             <TiDownloadOutline className="size-4" />
@@ -75,6 +85,7 @@ export default memo(function WalletCard({
           value={value}
           expanded={expanded}
           secret={isSecretLabel(secretLabels, label)}
+          note={fields?.get(label)?.note}
           revealAll={revealAll}
         />
       ))}

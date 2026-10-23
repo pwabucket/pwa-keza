@@ -10,15 +10,10 @@ const SAFE_READY_TIMEOUT = 60_000;
 /** Cleans up the handoff that is waiting for Safe, if any */
 let stopPendingHandoff: (() => void) | null = null;
 
-export function openSafe({
-  onHandoff,
-  ...entry
-}: {
+export function openSafe(entry: {
   type: "file";
   filename: string;
   content: File;
-  /** Called once Safe has received the file */
-  onHandoff?: () => void;
 }) {
   if (!SAFE_URL) {
     toast.error("Safe is not configured.");
@@ -43,7 +38,6 @@ export function openSafe({
     if (event.data === "ready") {
       safeWindow!.postMessage(entry, safeOrigin);
       stop();
-      onHandoff?.();
     }
   }
 

@@ -3,8 +3,21 @@ import toast from "react-hot-toast";
 /** How long a copied secret stays on the clipboard, in milliseconds */
 const SECRET_CLEAR_DELAY = 30_000;
 
-/** The secret waiting to be cleared, if any */
-let pendingClear: { timer: number; stopRetry?: () => void } | null = null;
+/**
+ * Events that count as a user gesture. Safari and Firefox only allow
+ * clipboard writes during one, so a blocked clear is retried on the next.
+ */
+const GESTURE_EVENTS = ["pointerup", "keydown"] as const;
+
+/** A copied secret waiting to be cleared */
+interface PendingClear {
+  timer: number;
+  /** Removes the gesture listeners of a clear that was blocked */
+  stopRetry?: () => void;
+}
+
+/** The latest copied secret; only this one may still be cleared */
+let pendingClear: PendingClear | null = null;
 
 function cancelPendingClear() {
   if (!pendingClear) return;
@@ -14,31 +27,36 @@ function cancelPendingClear() {
   pendingClear = null;
 }
 
-/**
- * Empties the clipboard. Browsers only allow it while the page has focus,
- * so a failed attempt waits for the page to be focused again.
- */
-async function clearClipboard() {
+/** Empties the clipboard, unless something has been copied since */
+async function clearClipboard(entry: PendingClear) {
+  if (pendingClear !== entry) return;
+
   try {
     await navigator.clipboard.writeText("");
-    pendingClear = null;
+
+    if (pendingClear === entry) pendingClear = null;
   } catch {
-    const retry = () => {
-      if (document.hasFocus()) {
-        stop();
-        clearClipboard();
-      }
-    };
-    const stop = () => {
-      window.removeEventListener("focus", retry);
-      document.removeEventListener("visibilitychange", retry);
-    };
-
-    window.addEventListener("focus", retry);
-    document.addEventListener("visibilitychange", retry);
-
-    if (pendingClear) pendingClear.stopRetry = stop;
+    if (pendingClear === entry) retryOnNextGesture(entry);
   }
+}
+
+/** Tries the clear again during the user's next tap or key press */
+function retryOnNextGesture(entry: PendingClear) {
+  const retry = () => {
+    stop();
+    clearClipboard(entry);
+  };
+  const stop = () => {
+    for (const type of GESTURE_EVENTS) {
+      window.removeEventListener(type, retry, true);
+    }
+  };
+
+  for (const type of GESTURE_EVENTS) {
+    window.addEventListener(type, retry, true);
+  }
+
+  entry.stopRetry = stop;
 }
 
 /**
@@ -61,10 +79,15 @@ export async function copyToClipboard(
   }
 
   if (secret) {
-    pendingClear = {
-      timer: window.setTimeout(clearClipboard, SECRET_CLEAR_DELAY),
-    };
-    toast.success("Copied! The clipboard clears in 30 seconds.", {
+    const entry: PendingClear = { timer: 0 };
+
+    entry.timer = window.setTimeout(
+      () => clearClipboard(entry),
+      SECRET_CLEAR_DELAY,
+    );
+    pendingClear = entry;
+
+    toast.success("Copied! It will be cleared from the clipboard soon.", {
       id: "copy",
     });
   } else {

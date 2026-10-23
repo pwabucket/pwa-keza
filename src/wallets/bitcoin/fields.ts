@@ -50,11 +50,13 @@ export const fields: WalletField[] = [
   {
     label: BitcoinWallet.PUBLIC_KEY,
     kind: FieldKind.PUBLIC_KEY,
+    note: "Of the Taproot (P2TR) address",
     pattern: /^0[23][0-9a-f]{64}$/,
   },
   {
     label: BitcoinWallet.PRIVATE_KEY,
     kind: FieldKind.SECRET,
+    note: "Of the Taproot (P2TR) address",
     pattern: new RegExp(`^[KLc]${BASE58}{51}$`),
   },
   DERIVATION_PATH_FIELD,

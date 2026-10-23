@@ -7,10 +7,8 @@ import WalletDialogs from "./WalletDialogs";
 import WalletToolbar from "./WalletToolbar";
 import useHotkeys from "../../hooks/useHotkeys";
 import useSession from "../../hooks/useSession";
-import useWalletSearch, { type WalletEntry } from "../../hooks/useWalletSearch";
+import useWalletSearch from "../../hooks/useWalletSearch";
 import { getSecretLabels } from "../../wallets/secrets";
-
-const computeItemKey = (_: number, entry: WalletEntry) => entry.index;
 
 /** The session's wallets with a toolbar, search and a virtualized list */
 export default function WalletList() {
@@ -19,27 +17,46 @@ export default function WalletList() {
   const revealAll = useSession((state) => state.revealAll);
   const module = useSession((state) => state.module);
   const unsaved = useSession((state) => state.unsaved);
-  const { query, setQuery, entries } = useWalletSearch(rows);
+  const { query, handleQueryChange, matches } = useWalletSearch(rows);
   const searchRef = useRef<HTMLInputElement>(null);
 
   useHotkeys({ "/": () => searchRef.current?.focus() });
 
   const secretLabels = useMemo(() => getSecretLabels(module), [module]);
+  const fields = module?.fieldsByLabel ?? null;
+
+  /* Position in the shown list to position in the full list */
+  const toIndex = useCallback(
+    (position: number) => (matches ? matches[position] : position),
+    [matches],
+  );
+
+  const computeItemKey = useCallback(
+    (position: number) => toIndex(position),
+    [toIndex],
+  );
 
   const itemContent = useCallback(
-    (_: number, entry: WalletEntry) => (
-      <div className="pb-4">
-        <WalletCard
-          index={entry.index}
-          row={entry.row}
-          expanded={expanded}
-          secretLabels={secretLabels}
-          revealAll={revealAll}
-        />
-      </div>
-    ),
-    [expanded, secretLabels, revealAll],
+    (position: number) => {
+      const index = toIndex(position);
+
+      return (
+        <div className="pb-4">
+          <WalletCard
+            index={index}
+            row={rows[index]}
+            expanded={expanded}
+            secretLabels={secretLabels}
+            fields={fields}
+            revealAll={revealAll}
+          />
+        </div>
+      );
+    },
+    [toIndex, rows, expanded, secretLabels, fields, revealAll],
   );
+
+  const shownCount = matches ? matches.length : rows.length;
 
   return (
     <WalletDialogs>
@@ -64,18 +81,19 @@ export default function WalletList() {
           aria-label="Search wallets"
           placeholder="Search wallets"
           value={query}
-          onChange={(e) => setQuery(e.target.value)}
+          onChange={handleQueryChange}
         />
-        <p className="text-center" aria-live="polite">
+        {/* Only search results are announced; the count changes constantly while generating */}
+        <p className="text-center" aria-live={query ? "polite" : "off"}>
           <span className="font-bold">{query ? "Results" : "Wallets"}:</span>{" "}
-          {entries.length}
+          {shownCount}
         </p>
       </div>
 
       <div className="flex flex-col">
         <Virtuoso
           useWindowScroll
-          data={entries}
+          totalCount={shownCount}
           computeItemKey={computeItemKey}
           itemContent={itemContent}
         />
