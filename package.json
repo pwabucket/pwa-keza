@@ -8,13 +8,19 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
+    "test": "vitest run",
     "preview": "vite preview",
     "generate-pwa-assets": "pwa-assets-generator"
   },
   "dependencies": {
+    "@aptos-labs/ts-sdk": "^7.5.0",
+    "@cosmjs/crypto": "^0.39.0",
+    "@cosmjs/encoding": "^0.39.0",
     "@fontsource/monoton": "^5.3.0",
     "@fontsource/noto-sans": "^5.3.0",
+    "@mysten/sui": "^2.37.0",
     "@pwabucket/pwa-router": "^0.0.25",
+    "@scure/bip32": "^2.4.0",
     "@solana/web3.js": "^3.1.1",
     "@stellar/stellar-sdk": "^17.3.0",
     "@tailwindcss/vite": "^4.3.3",
@@ -24,6 +30,7 @@
     "bip32": "5.0.1",
     "bip39": "^3.1.2",
     "bitcoinjs-lib": "^7.0.4",
+    "bs58": "^6.0.0",
     "buffer": "^6.0.3",
     "clsx": "^2.1.1",
     "comlink": "^4.4.2",
@@ -43,6 +50,7 @@
     "react-markdown": "^10.1.0",
     "react-router": "^7.18.4",
     "react-virtuoso": "^4.18.19",
+    "ripple-keypairs": "^3.1.0",
     "tailwind-merge": "^3.7.0",
     "tailwindcss": "^4.3.3",
     "tiny-secp256k1": "^2.2.4",
@@ -64,6 +72,7 @@
     "vite-plugin-package-version": "^1.1.0",
     "vite-plugin-pwa": "^2.0.0",
     "vite-plugin-wasm": "^3.6.0",
+    "vitest": "^5.0.5",
     "workbox-window": "^7.4.1"
   }
 }

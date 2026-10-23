@@ -7,6 +7,7 @@ export default defineWalletModule({
   title: "Solana Wallets",
   icon: Icon,
   fields,
+  order: 50,
   tags: ["SOL", "WIF", "PENGU"],
   defaultExpanded: true,
 });

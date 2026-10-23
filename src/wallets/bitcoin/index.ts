@@ -7,5 +7,7 @@ export default defineWalletModule({
   title: "Bitcoin Wallets",
   icon: Icon,
   fields,
+  order: 30,
   tags: ["BTC"],
+  supportsTestnet: true,
 });

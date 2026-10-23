@@ -7,6 +7,7 @@ export default defineWalletModule({
   title: "24-Word Mnemonic Wallets",
   icon: Icon,
   fields,
+  order: 20,
   tags: ["Tonkeeper", "Phantom"],
   defaultExpanded: true,
 });

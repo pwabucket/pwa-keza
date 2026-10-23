@@ -28,6 +28,8 @@ export interface WalletModuleDefinition {
   tags: string[];
   /** Every column the module produces */
   fields: WalletField[];
+  /** Position on Home; modules without one follow, sorted by title */
+  order?: number;
   defaultExpanded?: boolean;
   supportsTestnet?: boolean;
   getParcelConfig?: GetParcelConfig;

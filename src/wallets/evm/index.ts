@@ -7,6 +7,7 @@ export default defineWalletModule({
   title: "EVM Wallets",
   icon: Icon,
   fields,
+  order: 40,
   tags: ["ETH", "BNB", "POL"],
   getParcelConfig(wallets) {
     return {

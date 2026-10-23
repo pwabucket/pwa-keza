@@ -7,6 +7,7 @@ export default defineWalletModule({
   title: "TON Wallets",
   icon: Icon,
   fields,
+  order: 60,
   tags: ["TON", "NOT", "DOGS"],
   supportsTestnet: true,
   getParcelConfig(wallets, { version = 5 }: { version?: number } = {}) {

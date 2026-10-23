@@ -7,6 +7,7 @@ export default defineWalletModule({
   title: "12-Word Mnemonic Wallets",
   icon: Icon,
   fields,
+  order: 10,
   tags: ["Metamask", "Bitget Wallet"],
   defaultExpanded: true,
 });

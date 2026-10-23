@@ -18,6 +18,8 @@ export const BitcoinWallet = {
 /** Bech32 data characters */
 const BECH32 = "[02-9ac-hj-np-z]";
 
+/* Patterns accept both mainnet and testnet values */
+
 export const fields: WalletField[] = [
   {
     label: BitcoinWallet.MNEMONIC,
@@ -27,22 +29,22 @@ export const fields: WalletField[] = [
   {
     label: BitcoinWallet.TAPROOT_ADDRESS,
     kind: FieldKind.ADDRESS,
-    pattern: new RegExp(`^bc1p${BECH32}{58}$`),
+    pattern: new RegExp(`^(bc|tb)1p${BECH32}{58}$`),
   },
   {
     label: BitcoinWallet.NESTED_ADDRESS,
     kind: FieldKind.ADDRESS,
-    pattern: new RegExp(`^3${BASE58}{25,34}$`),
+    pattern: new RegExp(`^[23]${BASE58}{25,34}$`),
   },
   {
     label: BitcoinWallet.NATIVE_ADDRESS,
     kind: FieldKind.ADDRESS,
-    pattern: new RegExp(`^bc1q${BECH32}{38}$`),
+    pattern: new RegExp(`^(bc|tb)1q${BECH32}{38}$`),
   },
   {
     label: BitcoinWallet.LEGACY_ADDRESS,
     kind: FieldKind.ADDRESS,
-    pattern: new RegExp(`^1${BASE58}{25,34}$`),
+    pattern: new RegExp(`^[1mn]${BASE58}{25,34}$`),
   },
   {
     label: BitcoinWallet.PUBLIC_KEY,
@@ -52,6 +54,6 @@ export const fields: WalletField[] = [
   {
     label: BitcoinWallet.PRIVATE_KEY,
     kind: FieldKind.SECRET,
-    pattern: new RegExp(`^[KL]${BASE58}{51}$`),
+    pattern: new RegExp(`^[KLc]${BASE58}{51}$`),
   },
 ];

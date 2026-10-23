@@ -7,5 +7,6 @@ export default defineWalletModule({
   title: "Tron Wallets",
   icon: Icon,
   fields,
+  order: 70,
   tags: ["TRX", "SUN", "BTT"],
 });
