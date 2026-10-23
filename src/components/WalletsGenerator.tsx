@@ -1,6 +1,7 @@
 import ConfirmDialog from "./ui/ConfirmDialog";
 import DeriveForm from "./generator/DeriveForm";
 import GeneratorModeSwitch from "./generator/GeneratorModeSwitch";
+import VanityForm from "./generator/VanityForm";
 import HeaderTitle from "../layouts/HeaderTitle";
 import InnerAppLayout from "../layouts/InnerAppLayout";
 import JobProgress from "./JobProgress";
@@ -23,12 +24,20 @@ export default function WalletsGenerator({ module }: { module: WalletModule }) {
     generate,
     derive,
     cancel,
+    vanityStatus,
+    vanityStats,
+    stopVanity,
+    searchVanity,
     isConfirming,
     confirmReplace,
     cancelReplace,
   } = useGenerateWallets(module.id);
-  const isRunning = status === JobStatus.RUNNING;
+  const isJobRunning = status === JobStatus.RUNNING;
+  const isSearching = vanityStatus === JobStatus.RUNNING;
+  const isRunning = isJobRunning || isSearching;
   const isDeriving = module.derive && mode === GeneratorMode.DERIVE;
+  const isVanity = module.vanity && mode === GeneratorMode.VANITY;
+  const hasModes = Boolean(module.derive || module.vanity);
 
   return (
     <InnerAppLayout
@@ -37,11 +46,20 @@ export default function WalletsGenerator({ module }: { module: WalletModule }) {
       }
       className="gap-4"
     >
-      {module.derive ? (
-        <GeneratorModeSwitch mode={mode} onChange={setMode} />
+      {hasModes ? (
+        <GeneratorModeSwitch module={module} mode={mode} onChange={setMode} />
       ) : null}
 
-      {isDeriving ? (
+      {isVanity ? (
+        <VanityForm
+          capability={module.vanity!}
+          onSearch={searchVanity}
+          onStop={stopVanity}
+          isSearching={isSearching}
+          isRunning={isRunning}
+          stats={vanityStats}
+        />
+      ) : isDeriving ? (
         <DeriveForm module={module} onDerive={derive} isRunning={isRunning} />
       ) : (
         <WalletGeneratorInput
@@ -51,7 +69,7 @@ export default function WalletsGenerator({ module }: { module: WalletModule }) {
         />
       )}
 
-      {isRunning ? (
+      {isJobRunning ? (
         <JobProgress
           done={rowCount}
           total={progress.total}
@@ -66,9 +84,11 @@ export default function WalletsGenerator({ module }: { module: WalletModule }) {
         </div>
       ) : isRunning ? null : (
         <p className="italic text-center p-4">
-          {isDeriving
-            ? "Enter your phrase to derive its wallets..."
-            : "Click Generate to start..."}
+          {isVanity
+            ? "Matches will appear here..."
+            : isDeriving
+              ? "Enter your phrase to derive its wallets..."
+              : "Click Generate to start..."}
         </p>
       )}
 

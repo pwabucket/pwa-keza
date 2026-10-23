@@ -1,6 +1,6 @@
-import { computeAddress, hexlify } from "ethers";
+import { SigningKey, computeAddress, hexlify, randomBytes } from "ethers";
 
-import type { WalletDeriver } from "../../types/wallet";
+import type { VanityGenerator, WalletDeriver } from "../../types/wallet";
 import { DERIVATION_PATH_FIELD } from "../fields";
 import { EVMWallet } from "./fields";
 import { createBip39Generator, resolveIndexPath } from "../derive";
@@ -28,3 +28,20 @@ export const derive: WalletDeriver = async ({
 };
 
 export default createBip39Generator(derive, presets[0].path);
+
+/** Random key whose row is built only if its address is wanted */
+export const vanity: VanityGenerator = async () => {
+  const signingKey = new SigningKey(randomBytes(32));
+  const address = computeAddress(signingKey.publicKey);
+
+  return {
+    address,
+    toRow: async () => ({
+      [EVMWallet.ADDRESS]: address,
+      [EVMWallet.PUBLIC_KEY]: signingKey.compressedPublicKey,
+      [EVMWallet.PRIVATE_KEY]: signingKey.privateKey,
+      /* Vanity keys are random, so there is no phrase */
+      [EVMWallet.PHRASE]: "",
+    }),
+  };
+};

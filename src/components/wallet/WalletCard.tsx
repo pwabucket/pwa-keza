@@ -7,6 +7,7 @@ import IconButton from "../ui/IconButton";
 import useWalletDialogs from "../../hooks/useWalletDialogs";
 import { cn } from "../../lib/utils";
 import { copyToClipboard } from "../../lib/clipboard";
+import { isSecretLabel } from "../../wallets/secrets";
 import type { WalletRow } from "../../types/wallet";
 
 const CARD_BUTTON_CLASS = "bg-neutral-600 p-2.5 rounded-xl";
@@ -72,7 +73,7 @@ export default memo(function WalletCard({
           label={label}
           value={value}
           expanded={expanded}
-          secret={secretLabels?.has(label) ?? true}
+          secret={isSecretLabel(secretLabels, label)}
           revealAll={revealAll}
         />
       ))}

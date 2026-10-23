@@ -14,8 +14,14 @@ const ITEM_CLASS = cn(
 /** Menu holding the list actions on narrow toolbars */
 export default function ListActionsMenu({ className }: { className?: string }) {
   const [isOpen, setIsOpen] = useLocationToggle("wallet-list-menu");
-  const { expanded, revealAll, toggleExpanded, toggleRevealAll, copyAll } =
-    useListActions();
+  const {
+    expanded,
+    revealAll,
+    toggleExpanded,
+    toggleRevealAll,
+    copyAll,
+    openPrint,
+  } = useListActions();
 
   return (
     <DropdownMenu.Root open={isOpen} onOpenChange={setIsOpen}>
@@ -57,6 +63,9 @@ export default function ListActionsMenu({ className }: { className?: string }) {
           </DropdownMenu.CheckboxItem>
           <DropdownMenu.Item onSelect={copyAll} className={ITEM_CLASS}>
             Copy All
+          </DropdownMenu.Item>
+          <DropdownMenu.Item onSelect={openPrint} className={ITEM_CLASS}>
+            Print
           </DropdownMenu.Item>
         </DropdownMenu.Content>
       </DropdownMenu.Portal>

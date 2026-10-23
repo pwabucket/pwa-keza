@@ -7,6 +7,7 @@ export interface WalletDialogsActions {
   /** Opens the QR code dialog for one field of one wallet */
   openField: (index: number, label: string) => void;
   openDownload: (target: DownloadTarget) => void;
+  openPrint: () => void;
 }
 
 /** Stable openers for the shared wallet dialogs */

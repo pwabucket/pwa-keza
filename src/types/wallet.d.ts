@@ -1,5 +1,6 @@
 import type { WalletField } from "../wallets/fields";
 import type { MnemonicType } from "../wallets/derive";
+import type { LetterCase } from "../wallets/vanity";
 
 /** One wallet: field label to value, in display order */
 export type WalletRow = Record<string, string>;
@@ -51,6 +52,27 @@ export interface GetParcelConfig {
   (wallets: WalletRow[], options?: Record<string, unknown>): any;
 }
 
+/** A random wallet whose full row is only built when its address matches */
+export interface VanityCandidate {
+  address: string;
+  toRow: () => Promise<WalletRow>;
+}
+
+/** Makes one vanity candidate; vanity modules' generator.ts export one */
+export type VanityGenerator = () => Promise<VanityCandidate>;
+
+export interface VanityCapability {
+  /** Label of the address field that is matched */
+  field: string;
+  /** Characters every address starts with, e.g. 0x or T */
+  fixedPrefix: string;
+  /** Characters that can follow the fixed prefix anywhere in the address */
+  alphabet: string;
+  /** Characters that can come first after the fixed prefix, when limited */
+  firstCharacters?: string;
+  letterCase: LetterCase;
+}
+
 export interface WalletModuleDefinition {
   id: string;
   title: string;
@@ -64,6 +86,8 @@ export interface WalletModuleDefinition {
   supportsTestnet?: boolean;
   /** Present when wallets can be derived from an existing phrase */
   derive?: DeriveCapability;
+  /** Present when addresses can be searched for a prefix or suffix */
+  vanity?: VanityCapability;
   getParcelConfig?: GetParcelConfig;
 }
 

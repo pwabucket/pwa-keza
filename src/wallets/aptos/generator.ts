@@ -1,6 +1,6 @@
 import { Ed25519PrivateKey } from "@aptos-labs/ts-sdk/crypto";
 
-import type { WalletDeriver } from "../../types/wallet";
+import type { VanityGenerator, WalletDeriver } from "../../types/wallet";
 import { AptosWallet } from "./fields";
 import { DERIVATION_PATH_FIELD } from "../fields";
 import { createBip39Generator, resolveIndexPath } from "../derive";
@@ -28,3 +28,21 @@ export const derive: WalletDeriver = async ({
 };
 
 export default createBip39Generator(derive, presets[0].path);
+
+/** Random key whose row is built only if its address is wanted */
+export const vanity: VanityGenerator = async () => {
+  const privateKey = Ed25519PrivateKey.generate();
+  const publicKey = privateKey.publicKey();
+  const address = publicKey.authKey().derivedAddress().toStringLong();
+
+  return {
+    address,
+    toRow: async () => ({
+      /* Vanity keys are random, so there is no phrase */
+      [AptosWallet.MNEMONIC]: "",
+      [AptosWallet.ADDRESS]: address,
+      [AptosWallet.PUBLIC_KEY]: publicKey.toString(),
+      [AptosWallet.PRIVATE_KEY]: privateKey.toAIP80String(),
+    }),
+  };
+};

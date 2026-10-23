@@ -8,7 +8,7 @@ import WalletToolbar from "./WalletToolbar";
 import useHotkeys from "../../hooks/useHotkeys";
 import useSession from "../../hooks/useSession";
 import useWalletSearch, { type WalletEntry } from "../../hooks/useWalletSearch";
-import { SECRET_KINDS } from "../../wallets/fields";
+import { getSecretLabels } from "../../wallets/secrets";
 
 const computeItemKey = (_: number, entry: WalletEntry) => entry.index;
 
@@ -24,18 +24,7 @@ export default function WalletList() {
 
   useHotkeys({ "/": () => searchRef.current?.focus() });
 
-  /* Without a known module every field is treated as secret */
-  const secretLabels = useMemo(
-    () =>
-      module
-        ? new Set(
-            module.fields
-              .filter((field) => SECRET_KINDS.has(field.kind))
-              .map((field) => field.label),
-          )
-        : null,
-    [module],
-  );
+  const secretLabels = useMemo(() => getSecretLabels(module), [module]);
 
   const itemContent = useCallback(
     (_: number, entry: WalletEntry) => (

@@ -1,7 +1,8 @@
 import { MnemonicType } from "../derive";
+import { LetterCase, BASE58_ALPHABET } from "../vanity";
 import { defineWalletModule } from "../define";
 import { presets } from "./presets";
-import { fields } from "./fields";
+import { SolanaWallet, fields } from "./fields";
 import Icon from "./icon.svg";
 
 export default defineWalletModule({
@@ -9,6 +10,12 @@ export default defineWalletModule({
   title: "Solana Wallets",
   icon: Icon,
   fields,
+  vanity: {
+    field: SolanaWallet.ADDRESS,
+    fixedPrefix: "",
+    alphabet: BASE58_ALPHABET,
+    letterCase: LetterCase.MIXED,
+  },
   derive: {
     mnemonic: MnemonicType.BIP39,
     presets: presets,

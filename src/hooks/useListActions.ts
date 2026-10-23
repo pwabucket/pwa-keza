@@ -2,6 +2,7 @@ import { useCallback } from "react";
 
 import useSession from "./useSession";
 import useSessionStore from "./useSessionStore";
+import useWalletDialogs from "./useWalletDialogs";
 import { copyToClipboard } from "../lib/clipboard";
 
 /** Display toggles and bulk actions for the whole wallet list */
@@ -11,6 +12,7 @@ export default function useListActions() {
   const revealAll = useSession((state) => state.revealAll);
   const toggleExpanded = useSession((state) => state.toggleExpanded);
   const toggleRevealAll = useSession((state) => state.toggleRevealAll);
+  const { openPrint } = useWalletDialogs();
 
   /* Reads the rows on click, so the toolbar doesn't follow them */
   const copyAll = useCallback(
@@ -21,5 +23,12 @@ export default function useListActions() {
     [store],
   );
 
-  return { expanded, revealAll, toggleExpanded, toggleRevealAll, copyAll };
+  return {
+    expanded,
+    revealAll,
+    toggleExpanded,
+    toggleRevealAll,
+    copyAll,
+    openPrint,
+  };
 }

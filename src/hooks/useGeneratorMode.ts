@@ -21,7 +21,8 @@ export default function useGeneratorMode() {
       if (next === GeneratorMode.GENERATE) {
         setMode(undefined);
       } else {
-        setMode(next);
+        /* Moving between the other modes keeps one entry above Generate */
+        setMode(next, { replace: mode !== GeneratorMode.GENERATE });
       }
     },
     [mode, setMode],

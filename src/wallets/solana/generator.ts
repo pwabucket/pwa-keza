@@ -2,7 +2,7 @@ import bs58 from "bs58";
 import { Buffer } from "buffer";
 import { Keypair } from "@solana/web3.js";
 
-import type { WalletDeriver } from "../../types/wallet";
+import type { VanityGenerator, WalletDeriver } from "../../types/wallet";
 import { DERIVATION_PATH_FIELD } from "../fields";
 import { SolanaWallet } from "./fields";
 import { createBip39Generator, resolveIndexPath } from "../derive";
@@ -29,3 +29,18 @@ export const derive: WalletDeriver = async ({
 };
 
 export default createBip39Generator(derive, presets[0].path);
+
+/** Random key whose row is built only if its address is wanted */
+export const vanity: VanityGenerator = async () => {
+  const key = await Keypair.generate();
+  const address = key.publicKey.toBase58();
+
+  return {
+    address,
+    toRow: async () => ({
+      [SolanaWallet.ADDRESS]: address,
+      [SolanaWallet.PRIVATE_KEY]: bs58.encode(key.secretKey),
+      [SolanaWallet.SECRET_KEY]: Buffer.from(key.secretKey).toString("hex"),
+    }),
+  };
+};

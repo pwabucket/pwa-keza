@@ -57,6 +57,79 @@
   }
 }
 
+/* Paper wallets: only the print view is printed */
+#print-root {
+  display: none;
+}
+
+@media print {
+  body {
+    background: white;
+    color: black;
+    padding: 0;
+  }
+
+  body > *:not(#print-root) {
+    display: none !important;
+  }
+
+  #print-root {
+    display: block;
+  }
+}
+
+.print-view {
+  font-family: var(--font-sans);
+  font-size: 9pt;
+
+  .print-header {
+    margin-bottom: 8pt;
+
+    h1 {
+      font-size: 14pt;
+      font-weight: bold;
+    }
+  }
+
+  .print-wallet {
+    break-inside: avoid;
+    border: 1px solid black;
+    border-radius: 6pt;
+    padding: 8pt;
+    margin-bottom: 8pt;
+
+    h2 {
+      font-size: 11pt;
+      font-weight: bold;
+      margin-bottom: 4pt;
+    }
+  }
+
+  .print-field {
+    display: flex;
+    align-items: center;
+    gap: 8pt;
+    break-inside: avoid;
+    padding: 4pt 0;
+    border-top: 1px solid #ccc;
+  }
+
+  .print-field-text {
+    flex: 1;
+    min-width: 0;
+
+    h3 {
+      font-size: 8pt;
+      font-weight: bold;
+    }
+
+    p {
+      font-family: monospace;
+      word-break: break-all;
+    }
+  }
+}
+
 /* Override injected styles */
 body {
   @apply font-sans text-sm bg-neutral-800 text-white;

@@ -3,7 +3,11 @@ import {
   IoChevronUpOutline,
   IoCopyOutline,
 } from "react-icons/io5";
-import { HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2";
+import {
+  HiOutlineEye,
+  HiOutlineEyeSlash,
+  HiOutlinePrinter,
+} from "react-icons/hi2";
 
 import IconButton from "../ui/IconButton";
 import useListActions from "../../hooks/useListActions";
@@ -17,8 +21,14 @@ export default function ListActionButtons({
 }: {
   className?: string;
 }) {
-  const { expanded, revealAll, toggleExpanded, toggleRevealAll, copyAll } =
-    useListActions();
+  const {
+    expanded,
+    revealAll,
+    toggleExpanded,
+    toggleRevealAll,
+    copyAll,
+    openPrint,
+  } = useListActions();
 
   return (
     <div className={cn("gap-2 shrink-0", className)}>
@@ -50,6 +60,10 @@ export default function ListActionButtons({
 
       <IconButton label="Copy All" onClick={copyAll} className={BUTTON_CLASS}>
         <IoCopyOutline className="size-4" />
+      </IconButton>
+
+      <IconButton label="Print" onClick={openPrint} className={BUTTON_CLASS}>
+        <HiOutlinePrinter className="size-4" />
       </IconButton>
     </div>
   );

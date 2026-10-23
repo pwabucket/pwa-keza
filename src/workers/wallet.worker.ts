@@ -4,18 +4,23 @@ import * as Comlink from "comlink";
 import * as bip39 from "bip39";
 
 import type {
+  VanityGenerator,
   WalletDeriver,
   WalletGenerator,
   WalletRow,
 } from "../types/wallet";
 import type { ChunkHandler, WalletWorkerAPI } from "./protocol";
 import { MnemonicType } from "../wallets/derive";
+import { matchesVanity } from "../lib/vanity";
 
 /** Rows sent per chunk, unless the interval passes first */
 const CHUNK_SIZE = 25;
 
 /** Longest wait in milliseconds before sending the rows produced so far */
 const CHUNK_INTERVAL = 100;
+
+/** How often a vanity search reports its tries, in milliseconds */
+const ATTEMPTS_INTERVAL = 250;
 
 /** Each module's generator and deriver, loaded on first use into its chunk */
 const generators = import.meta.glob<WalletGenerator>(
@@ -25,6 +30,10 @@ const generators = import.meta.glob<WalletGenerator>(
 const derivers = import.meta.glob<WalletDeriver | undefined>(
   "../wallets/*/generator.ts",
   { import: "derive" },
+);
+const vanityGenerators = import.meta.glob<VanityGenerator | undefined>(
+  "../wallets/*/generator.ts",
+  { import: "vanity" },
 );
 
 async function loadExport<T>(
@@ -115,6 +124,29 @@ const api: WalletWorkerAPI = {
         }),
       onChunk,
     );
+  },
+
+  async vanity({ moduleId, matcher }, onAttempts) {
+    const createCandidate = await loadExport(vanityGenerators, moduleId);
+    let attempts = 0;
+    let lastReport = performance.now();
+
+    for (;;) {
+      const candidate = await createCandidate();
+      attempts++;
+
+      if (matchesVanity(candidate.address, matcher)) {
+        onAttempts(attempts);
+        return candidate.toRow();
+      }
+
+      if (performance.now() - lastReport >= ATTEMPTS_INTERVAL) {
+        /* Not awaited, so reporting never slows the search */
+        onAttempts(attempts);
+        attempts = 0;
+        lastReport = performance.now();
+      }
+    }
   },
 };
 

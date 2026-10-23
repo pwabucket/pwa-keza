@@ -6,6 +6,7 @@ import { memo, useState } from "react";
 import IconButton from "../ui/IconButton";
 import MaskedValue from "./MaskedValue";
 import useWalletDialogs from "../../hooks/useWalletDialogs";
+import { cn } from "../../lib/utils";
 import { copyToClipboard } from "../../lib/clipboard";
 
 const FIELD_BUTTON_CLASS = "bg-neutral-500 p-2 rounded-lg";
@@ -35,6 +36,9 @@ export default memo(function FieldRow({
   const [isRevealed, setIsRevealed] = useState(false);
   const revealed = !secret || revealAll || isRevealed;
 
+  /* e.g. the phrase of a vanity wallet, which has none */
+  const isEmpty = value === "";
+
   return (
     <div className="@container bg-neutral-600 rounded-xl">
       {/* Buttons move below the value when the row is narrow */}
@@ -43,9 +47,22 @@ export default memo(function FieldRow({
           <h3 className="text-neutral-300 font-bold text-xs wrap-break-word">
             {label}
           </h3>
-          <MaskedValue value={value} revealed={revealed} expanded={expanded} />
+          {isEmpty ? (
+            <p className="text-neutral-400 italic">None</p>
+          ) : (
+            <MaskedValue
+              value={value}
+              revealed={revealed}
+              expanded={expanded}
+            />
+          )}
         </div>
-        <div className="flex items-center justify-end gap-1 shrink-0">
+        <div
+          className={cn(
+            "flex items-center justify-end gap-1 shrink-0",
+            isEmpty && "hidden",
+          )}
+        >
           {secret && !revealAll ? (
             <IconButton
               label={isRevealed ? `Hide ${label}` : `Reveal ${label}`}

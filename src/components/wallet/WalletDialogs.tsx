@@ -2,6 +2,10 @@ import { useCallback, useMemo } from "react";
 import { useLocationState } from "@pwabucket/pwa-router";
 
 import FieldDialog, { type FieldTarget } from "./FieldDialog";
+import PrintDialog from "../print/PrintDialog";
+import PrintView from "../print/PrintView";
+import type { PrintOptions } from "../print/printOptions";
+import usePrint from "../../hooks/usePrint";
 import WalletDownloadDialog from "./WalletDownloadDialog";
 import {
   type DownloadTarget,
@@ -32,12 +36,20 @@ export default function WalletDialogs({
     DIALOG_STATE_OPTIONS,
   );
 
+  const [isPrinting, setIsPrinting] = useLocationState(
+    "wallet-print",
+    false,
+    DIALOG_STATE_OPTIONS,
+  );
+  const { job: printJob, print } = usePrint();
+
   const actions = useMemo(
     () => ({
       openField: (index: number, label: string) => setField({ index, label }),
       openDownload: (target: DownloadTarget) => setDownload(target),
+      openPrint: () => setIsPrinting(true),
     }),
-    [setField, setDownload],
+    [setField, setDownload, setIsPrinting],
   );
 
   const closeField = useCallback(() => setField(undefined), [setField]);
@@ -45,12 +57,29 @@ export default function WalletDialogs({
     () => setDownload(undefined),
     [setDownload],
   );
+  const closePrint = useCallback(
+    () => setIsPrinting(undefined),
+    [setIsPrinting],
+  );
+  const printAndClose = useCallback(
+    (options: PrintOptions) => {
+      print(options);
+      closePrint();
+    },
+    [print, closePrint],
+  );
 
   return (
     <WalletDialogsContext.Provider value={actions}>
       {children}
       <FieldDialog target={field} onClose={closeField} />
       <WalletDownloadDialog target={download} onClose={closeDownload} />
+      <PrintDialog
+        open={isPrinting}
+        onClose={closePrint}
+        onPrint={printAndClose}
+      />
+      {printJob ? <PrintView job={printJob} /> : null}
     </WalletDialogsContext.Provider>
   );
 }
