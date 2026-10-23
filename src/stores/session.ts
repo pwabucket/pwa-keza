@@ -20,6 +20,8 @@ export interface SessionState {
   rows: WalletRow[];
   /** Values wrap in full instead of being truncated */
   expanded: boolean;
+  /** Secrets are shown without having to reveal each one */
+  revealAll: boolean;
   /** Rows were generated here and haven't been exported yet */
   unsaved: boolean;
   guard: GuardStatus;
@@ -28,6 +30,7 @@ export interface SessionState {
   setRows: (rows: WalletRow[], unsaved: boolean) => void;
   setModule: (module: WalletModule | null) => void;
   toggleExpanded: () => void;
+  toggleRevealAll: () => void;
   markSaved: () => void;
   setGuard: (guard: GuardStatus) => void;
 }
@@ -38,6 +41,7 @@ export function createSessionStore(module: WalletModule | null) {
     module,
     rows: [],
     expanded: module?.defaultExpanded ?? false,
+    revealAll: false,
     unsaved: false,
     guard: GuardStatus.IDLE,
 
@@ -45,6 +49,7 @@ export function createSessionStore(module: WalletModule | null) {
     setModule: (module) =>
       set({ module, expanded: module?.defaultExpanded ?? false }),
     toggleExpanded: () => set((state) => ({ expanded: !state.expanded })),
+    toggleRevealAll: () => set((state) => ({ revealAll: !state.revealAll })),
     markSaved: () => set({ unsaved: false }),
     setGuard: (guard) => set({ guard }),
   }));

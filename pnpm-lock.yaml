@@ -53,9 +53,6 @@ importers:
       comlink:
         specifier: ^4.4.2
         version: 4.4.2
-      copy-to-clipboard:
-        specifier: ^4.0.2
-        version: 4.0.2
       date-fns:
         specifier: ^4.4.0
         version: 4.4.0
@@ -3174,9 +3171,6 @@ packages:
   cookie@1.1.1:
     resolution: {integrity: sha512-ei8Aos7ja0weRpFzJnEA9UHJ/7XQmqglbRwnf2ATjcB9Wq874VKH9kfjjirM6UhU2/E5fFYadylyhFldcqSidQ==}
     engines: {node: '>=18'}
-
-  copy-to-clipboard@4.0.2:
-    resolution: {integrity: sha512-gklSft7IuhriZKHKpuoA1fpJSLPNgvUMWMo5BlnzAJm0zNKnznoSv23IjtNqclx8eKi6ZcdvFFzYEER/+U1LoQ==}
 
   core-js-compat@3.49.0:
     resolution: {integrity: sha512-VQXt1jr9cBz03b331DFDCCP90b3fanciLkgiOoy8SBHy06gNf+vQ1A3WFLqG7I8TipYIKeYK9wxd0tUrvHcOZA==}
@@ -7794,8 +7788,6 @@ snapshots:
   convert-source-map@2.0.0: {}
 
   cookie@1.1.1: {}
-
-  copy-to-clipboard@4.0.2: {}
 
   core-js-compat@3.49.0:
     dependencies:

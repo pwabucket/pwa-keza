@@ -1,13 +1,39 @@
 import exportFromJSON, { type ExportType } from "export-from-json";
 import { Dialog } from "radix-ui";
 import { useCallback } from "react";
-import { FaFileAlt, FaFileCsv, FaFileExcel, FaFileCode } from "react-icons/fa";
+import {
+  FaFileAlt,
+  FaFileCsv,
+  FaFileExcel,
+  FaFileCode,
+  FaLock,
+} from "react-icons/fa";
+import { useLocationToggle } from "@pwabucket/pwa-router";
 
 import { cn } from "../lib/utils";
 import { openSafe } from "../lib/safe";
 import SafeIcon from "../assets/images/safe-icon.svg";
+import PasswordDialog from "./ui/PasswordDialog";
 import { PopupDialog } from "./PopupDialog";
+import { encryptBackup } from "../lib/crypto-envelope";
 import { format } from "date-fns";
+
+/** Shortest password accepted for an encrypted backup */
+const MIN_PASSWORD_LENGTH = 8;
+
+const EXPORT_TYPES = [
+  exportFromJSON.types.txt,
+  exportFromJSON.types.csv,
+  exportFromJSON.types.xls,
+  exportFromJSON.types.json,
+];
+
+const FILE_ICONS: Partial<Record<ExportType, React.ReactNode>> = {
+  txt: <FaFileAlt className="size-5" />,
+  csv: <FaFileCsv className="size-5" />,
+  xls: <FaFileExcel className="size-5" />,
+  json: <FaFileCode className="size-5" />,
+};
 
 const getExportFilename = (base: string) => {
   const timestamp = format(new Date(), "yyyy-MM-dd_HH-mm-ss");
@@ -17,10 +43,13 @@ const getExportFilename = (base: string) => {
 export default function DownloadDialog({
   data,
   filename,
+  moduleId,
   onExport,
 }: {
   data: Record<string, string>[];
   filename: string;
+  /** Stored inside encrypted backups, so Restore knows the wallet type */
+  moduleId: string | null;
   /** Called after the data has been handed off for saving */
   onExport?: () => void;
 }) {
@@ -59,20 +88,24 @@ export default function DownloadDialog({
     });
   }, [filename, data, onExport]);
 
-  const getFileIcon = (type: ExportType) => {
-    switch (type) {
-      case "txt":
-        return <FaFileAlt className="size-5" />;
-      case "csv":
-        return <FaFileCsv className="size-5" />;
-      case "xls":
-        return <FaFileExcel className="size-5" />;
-      case "json":
-        return <FaFileCode className="size-5" />;
-      default:
-        return <FaFileAlt className="size-5" />;
-    }
-  };
+  const [isEncrypting, setIsEncrypting] = useLocationToggle(
+    "encrypt-password"
+  );
+
+  const encryptWithPassword = useCallback(
+    async (password: string) => {
+      const envelope = await encryptBackup({ moduleId, rows: data }, password);
+
+      exportFromJSON({
+        data: envelope,
+        fileName: getExportFilename(`${filename}-encrypted`),
+        exportType: exportFromJSON.types.json,
+      });
+      onExport?.();
+      setIsEncrypting(false);
+    },
+    [moduleId, data, filename, onExport, setIsEncrypting]
+  );
 
   return (
     <PopupDialog>
@@ -107,13 +140,22 @@ export default function DownloadDialog({
         Encrypt with Safe
       </button>
 
+      {/* Encrypt with a password, restorable here */}
+      <button
+        onClick={() => setIsEncrypting(true)}
+        className={cn(
+          "font-bold text-center uppercase",
+          "px-4 py-2",
+          "bg-neutral-700 rounded-xl text-green-300",
+          "flex items-center justify-center gap-2"
+        )}
+      >
+        <FaLock className="size-4" />
+        Encrypt with password
+      </button>
+
       {/* Export Buttons */}
-      {[
-        exportFromJSON.types.txt,
-        exportFromJSON.types.csv,
-        exportFromJSON.types.xls,
-        exportFromJSON.types.json,
-      ].map((type) => (
+      {EXPORT_TYPES.map((type) => (
         <button
           key={type}
           className={cn(
@@ -124,7 +166,7 @@ export default function DownloadDialog({
           )}
           onClick={() => download(type)}
         >
-          {getFileIcon(type)}
+          {FILE_ICONS[type]}
           <span className="min-w-10">{type}</span>
         </button>
       ))}
@@ -134,6 +176,17 @@ export default function DownloadDialog({
       >
         Close
       </Dialog.Close>
+
+      <PasswordDialog
+        open={isEncrypting}
+        title="Encrypt backup"
+        description="You'll need this password to restore the backup. It can't be recovered."
+        submitLabel="Encrypt and download"
+        confirm
+        minLength={MIN_PASSWORD_LENGTH}
+        onSubmit={encryptWithPassword}
+        onCancel={() => setIsEncrypting(false)}
+      />
     </PopupDialog>
   );
 }

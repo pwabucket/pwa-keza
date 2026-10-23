@@ -8,6 +8,12 @@ export const FieldKind = {
 
 export type FieldKind = (typeof FieldKind)[keyof typeof FieldKind];
 
+/** Kinds that are hidden until revealed and cleared after copying */
+export const SECRET_KINDS: ReadonlySet<FieldKind> = new Set([
+  FieldKind.SECRET,
+  FieldKind.MNEMONIC,
+]);
+
 export interface WalletField {
   /** Column label, also the CSV/JSON header; never rename an existing one */
   label: string;

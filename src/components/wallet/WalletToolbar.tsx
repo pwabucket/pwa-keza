@@ -1,34 +1,20 @@
-import {
-  IoChevronDownOutline,
-  IoChevronUpOutline,
-  IoCopyOutline,
-} from "react-icons/io5";
 import { TiDownloadOutline } from "react-icons/ti";
 import { memo, useCallback } from "react";
 
-import IconButton from "../ui/IconButton";
+import ListActionButtons from "./ListActionButtons";
+import ListActionsMenu from "./ListActionsMenu";
 import ParcelButton from "./ParcelButton";
 import useSession from "../../hooks/useSession";
-import useSessionStore from "../../hooks/useSessionStore";
 import useWalletDialogs from "../../hooks/useWalletDialogs";
 import { PARCEL_URL } from "../../lib/parcel";
-import { cn, copyToClipboard } from "../../lib/utils";
-
-const TOOLBAR_BUTTON_CLASS = "bg-neutral-600 px-3 py-2 rounded-xl";
+import { cn } from "../../lib/utils";
 
 /** Sticky actions for the whole wallet list */
 export default memo(function WalletToolbar() {
-  const store = useSessionStore();
   const getParcelConfig = useSession((state) => state.module?.getParcelConfig);
-  const expanded = useSession((state) => state.expanded);
-  const toggleExpanded = useSession((state) => state.toggleExpanded);
   const { openDownload } = useWalletDialogs();
 
   const downloadAll = useCallback(() => openDownload("all"), [openDownload]);
-  const copyAll = useCallback(
-    () => copyToClipboard(JSON.stringify(store.getState().rows, null, 2)),
-    [store],
-  );
 
   return (
     <div
@@ -58,26 +44,9 @@ export default memo(function WalletToolbar() {
         <span className="hidden @3xs:inline truncate">Download All</span>
       </button>
 
-      <IconButton
-        label="Expand values"
-        aria-pressed={expanded}
-        onClick={toggleExpanded}
-        className={TOOLBAR_BUTTON_CLASS}
-      >
-        {expanded ? (
-          <IoChevronUpOutline className="size-4" />
-        ) : (
-          <IoChevronDownOutline className="size-4" />
-        )}
-      </IconButton>
-
-      <IconButton
-        label="Copy All"
-        onClick={copyAll}
-        className={TOOLBAR_BUTTON_CLASS}
-      >
-        <IoCopyOutline className="size-4" />
-      </IconButton>
+      {/* Inline when the toolbar is wide enough, in a menu otherwise */}
+      <ListActionButtons className="hidden @sm:flex" />
+      <ListActionsMenu className="@sm:hidden" />
     </div>
   );
 });

@@ -1,24 +1,20 @@
 import { csv2json } from "json-2-csv";
 
-export type WalletRow = Record<string, string>;
+import { type EncryptedEnvelope, isEncryptedEnvelope } from "./crypto-envelope";
+import { isWalletRows } from "./walletRows";
+import type { WalletRow } from "../types/wallet";
 
-/** Checks that the data is a non-empty list of flat string records */
-function isWalletRows(data: unknown): data is WalletRow[] {
-  return (
-    Array.isArray(data) &&
-    data.length > 0 &&
-    data.every(
-      (row) =>
-        typeof row === "object" &&
-        row !== null &&
-        !Array.isArray(row) &&
-        Object.values(row).every((value) => typeof value === "string"),
-    )
-  );
-}
+export const BackupKind = {
+  ROWS: "rows",
+  ENCRYPTED: "encrypted",
+} as const;
 
-/** Parses a backup file's text into wallet rows, throwing when it is invalid */
-export function parseBackup(filename: string, content: string): WalletRow[] {
+export type Backup =
+  | { kind: typeof BackupKind.ROWS; rows: WalletRow[] }
+  | { kind: typeof BackupKind.ENCRYPTED; envelope: EncryptedEnvelope };
+
+/** Reads a backup file's text, throwing when it is neither format */
+export function readBackup(filename: string, content: string): Backup {
   const isCsv = filename.toLowerCase().endsWith(".csv");
   const data = isCsv
     ? csv2json(content, {
@@ -28,9 +24,13 @@ export function parseBackup(filename: string, content: string): WalletRow[] {
       })
     : JSON.parse(content);
 
+  if (isEncryptedEnvelope(data)) {
+    return { kind: BackupKind.ENCRYPTED, envelope: data };
+  }
+
   if (!isWalletRows(data)) {
     throw new Error("Invalid backup file");
   }
 
-  return data;
+  return { kind: BackupKind.ROWS, rows: data };
 }

@@ -16,7 +16,7 @@ export default function WalletDownloadDialog({
   target: DownloadTarget | null;
   onClose: () => void;
 }) {
-  const moduleId = useSession((state) => state.module?.id) ?? UNKNOWN_MODULE_ID;
+  const moduleId = useSession((state) => state.module?.id) ?? null;
   const markSaved = useSession((state) => state.markSaved);
   const rows = useSession((state) => state.rows);
   const data = useMemo(() => {
@@ -27,6 +27,8 @@ export default function WalletDownloadDialog({
     return row ? [row] : null;
   }, [target, rows]);
 
+  const filePrefix = moduleId ?? UNKNOWN_MODULE_ID;
+
   /* Only exporting every wallet counts as saving the session */
   const handleExport = useCallback(() => {
     if (target === "all") markSaved();
@@ -34,8 +36,8 @@ export default function WalletDownloadDialog({
 
   const filename =
     target === "all"
-      ? `${moduleId}-wallets`
-      : `${moduleId}-wallet-${(target ?? 0) + 1}`;
+      ? `${filePrefix}-wallets`
+      : `${filePrefix}-wallet-${(target ?? 0) + 1}`;
 
   return (
     <Dialog.Root
@@ -46,6 +48,7 @@ export default function WalletDownloadDialog({
         <DownloadDialog
           data={data}
           filename={filename}
+          moduleId={moduleId}
           onExport={handleExport}
         />
       ) : null}

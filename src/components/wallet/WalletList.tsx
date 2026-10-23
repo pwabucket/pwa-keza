@@ -1,5 +1,5 @@
 import { Virtuoso } from "react-virtuoso";
-import { useCallback, useRef } from "react";
+import { useCallback, useMemo, useRef } from "react";
 
 import Input from "../Input";
 import WalletCard from "./WalletCard";
@@ -8,6 +8,7 @@ import WalletToolbar from "./WalletToolbar";
 import useHotkeys from "../../hooks/useHotkeys";
 import useSession from "../../hooks/useSession";
 import useWalletSearch, { type WalletEntry } from "../../hooks/useWalletSearch";
+import { SECRET_KINDS } from "../../wallets/fields";
 
 const computeItemKey = (_: number, entry: WalletEntry) => entry.index;
 
@@ -15,19 +16,40 @@ const computeItemKey = (_: number, entry: WalletEntry) => entry.index;
 export default function WalletList() {
   const rows = useSession((state) => state.rows);
   const expanded = useSession((state) => state.expanded);
+  const revealAll = useSession((state) => state.revealAll);
+  const module = useSession((state) => state.module);
   const unsaved = useSession((state) => state.unsaved);
   const { query, setQuery, entries } = useWalletSearch(rows);
   const searchRef = useRef<HTMLInputElement>(null);
 
   useHotkeys({ "/": () => searchRef.current?.focus() });
 
+  /* Without a known module every field is treated as secret */
+  const secretLabels = useMemo(
+    () =>
+      module
+        ? new Set(
+            module.fields
+              .filter((field) => SECRET_KINDS.has(field.kind))
+              .map((field) => field.label),
+          )
+        : null,
+    [module],
+  );
+
   const itemContent = useCallback(
     (_: number, entry: WalletEntry) => (
       <div className="pb-4">
-        <WalletCard index={entry.index} row={entry.row} expanded={expanded} />
+        <WalletCard
+          index={entry.index}
+          row={entry.row}
+          expanded={expanded}
+          secretLabels={secretLabels}
+          revealAll={revealAll}
+        />
       </div>
     ),
-    [expanded],
+    [expanded, secretLabels, revealAll],
   );
 
   return (

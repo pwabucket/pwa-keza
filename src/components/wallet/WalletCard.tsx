@@ -5,7 +5,8 @@ import { memo } from "react";
 import FieldRow from "./FieldRow";
 import IconButton from "../ui/IconButton";
 import useWalletDialogs from "../../hooks/useWalletDialogs";
-import { cn, copyToClipboard } from "../../lib/utils";
+import { cn } from "../../lib/utils";
+import { copyToClipboard } from "../../lib/clipboard";
 import type { WalletRow } from "../../types/wallet";
 
 const CARD_BUTTON_CLASS = "bg-neutral-600 p-2.5 rounded-xl";
@@ -15,6 +16,9 @@ type WalletCardProps = {
   index: number;
   row: WalletRow;
   expanded: boolean;
+  /** Labels of secret fields; null when unknown, so every field counts */
+  secretLabels: ReadonlySet<string> | null;
+  revealAll: boolean;
 };
 
 /** One wallet with all of its fields */
@@ -22,6 +26,8 @@ export default memo(function WalletCard({
   index,
   row,
   expanded,
+  secretLabels,
+  revealAll,
 }: WalletCardProps) {
   const { openDownload } = useWalletDialogs();
   const title = `Wallet ${index + 1}`;
@@ -42,7 +48,9 @@ export default memo(function WalletCard({
         <div className="flex shrink-0 gap-2">
           <IconButton
             label={`Copy ${title}`}
-            onClick={() => copyToClipboard(JSON.stringify(row, null, 2))}
+            onClick={() =>
+              copyToClipboard(JSON.stringify(row, null, 2), { secret: true })
+            }
             className={CARD_BUTTON_CLASS}
           >
             <IoCopyOutline className="size-4" />
@@ -64,6 +72,8 @@ export default memo(function WalletCard({
           label={label}
           value={value}
           expanded={expanded}
+          secret={secretLabels?.has(label) ?? true}
+          revealAll={revealAll}
         />
       ))}
     </div>
