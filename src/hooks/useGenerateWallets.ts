@@ -4,21 +4,33 @@ import { useLocationToggle } from "@pwabucket/pwa-router";
 
 import useSessionStore from "./useSessionStore";
 import useWalletJob, { type JobResult } from "./useWalletJob";
-import { JobStatus } from "../workers/protocol";
+import { type DeriveJob, JobStatus } from "../workers/protocol";
 import type { WalletGeneratorOptions } from "../types/wallet";
 
 const numberFormat = new Intl.NumberFormat();
 
-interface GenerateRequest {
-  count: number;
-  options: WalletGeneratorOptions;
-}
+const RequestKind = {
+  GENERATE: "generate",
+  DERIVE: "derive",
+} as const;
+
+type WalletRequest =
+  | {
+      kind: typeof RequestKind.GENERATE;
+      count: number;
+      options: WalletGeneratorOptions;
+    }
+  | { kind: typeof RequestKind.DERIVE; job: Omit<DeriveJob, "moduleId"> };
 
 /** Tells the user how a finished job went */
-function reportJobResult({ status, count, error }: JobResult, total: number) {
+function reportJobResult(
+  { status, count, error }: JobResult,
+  total: number,
+  verb: string,
+) {
   switch (status) {
     case JobStatus.DONE:
-      toast.success(`Generated ${numberFormat.format(count)} wallets.`, {
+      toast.success(`${verb} ${numberFormat.format(count)} wallets.`, {
         id: "job",
       });
       break;
@@ -29,45 +41,62 @@ function reportJobResult({ status, count, error }: JobResult, total: number) {
       );
       break;
     case JobStatus.FAILED:
-      toast.error(
-        `Error: ${error instanceof Error ? error.message : String(error)}`,
-        { id: "job" },
-      );
+      toast.error(error instanceof Error ? error.message : String(error), {
+        id: "job",
+      });
       break;
   }
 }
 
-/** Generates wallets, asking first when unsaved wallets would be replaced */
+/**
+ * Generates or derives wallets, asking first when unsaved wallets would be
+ * replaced.
+ */
 export default function useGenerateWallets(moduleId: string) {
   const store = useSessionStore();
-  const { status, progress, start, cancel } = useWalletJob(moduleId);
+  const job = useWalletJob(moduleId);
   const [isConfirming, setIsConfirming] =
     useLocationToggle("regenerate-confirm");
-  const pendingRef = useRef<GenerateRequest | null>(null);
+  const pendingRef = useRef<WalletRequest | null>(null);
+  const { generate: runGenerate, derive: runDerive } = job;
 
   const run = useCallback(
-    async ({ count, options }: GenerateRequest) => {
-      const result = await start(count, options);
-
-      if (result) {
-        reportJobResult(result, count);
+    async (request: WalletRequest) => {
+      if (request.kind === RequestKind.GENERATE) {
+        const result = await runGenerate(request.count, request.options);
+        if (result) reportJobResult(result, request.count, "Generated");
+      } else {
+        const result = await runDerive(request.job);
+        if (result) reportJobResult(result, request.job.count, "Derived");
       }
     },
-    [start],
+    [runGenerate, runDerive],
   );
 
-  const generate = useCallback(
-    (count: number, options: WalletGeneratorOptions) => {
+  const request = useCallback(
+    (walletRequest: WalletRequest) => {
       const { unsaved, rows } = store.getState();
 
       if (unsaved && rows.length > 0) {
-        pendingRef.current = { count, options };
+        pendingRef.current = walletRequest;
         setIsConfirming(true);
       } else {
-        run({ count, options });
+        run(walletRequest);
       }
     },
     [store, run, setIsConfirming],
+  );
+
+  const generate = useCallback(
+    (count: number, options: WalletGeneratorOptions) =>
+      request({ kind: RequestKind.GENERATE, count, options }),
+    [request],
+  );
+
+  const derive = useCallback(
+    (deriveJob: Omit<DeriveJob, "moduleId">) =>
+      request({ kind: RequestKind.DERIVE, job: deriveJob }),
+    [request],
   );
 
   const confirmReplace = useCallback(() => {
@@ -87,10 +116,11 @@ export default function useGenerateWallets(moduleId: string) {
   }, [setIsConfirming]);
 
   return {
-    status,
-    progress,
+    status: job.status,
+    progress: job.progress,
+    cancel: job.cancel,
     generate,
-    cancel,
+    derive,
     isConfirming,
     confirmReplace,
     cancelReplace,

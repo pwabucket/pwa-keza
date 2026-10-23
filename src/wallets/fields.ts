@@ -4,6 +4,8 @@ export const FieldKind = {
   PUBLIC_KEY: "public-key",
   SECRET: "secret",
   MNEMONIC: "mnemonic",
+  /** Descriptive values such as a derivation path */
+  META: "meta",
 } as const;
 
 export type FieldKind = (typeof FieldKind)[keyof typeof FieldKind];
@@ -31,3 +33,11 @@ export function mnemonicPattern(words: number) {
 
 /** Base58 alphabet, as used by Bitcoin, Solana and Tron */
 export const BASE58 = "[1-9A-HJ-NP-Za-km-z]";
+
+/** Path a wallet was derived at; {purpose} stands for each address type */
+export const DERIVATION_PATH_FIELD: WalletField = {
+  label: "Derivation Path",
+  kind: FieldKind.META,
+  optional: true,
+  pattern: /^m(\/(\d+|\{purpose\})'?)+$/,
+};

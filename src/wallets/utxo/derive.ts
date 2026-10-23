@@ -4,6 +4,7 @@ import BIP32Factory, { type BIP32Interface } from "bip32";
 import { Buffer } from "buffer";
 
 import type { UtxoChain } from "./networks";
+import { isValidPath, resolvePath } from "../derive";
 
 const bip32 = BIP32Factory(ecc);
 bitcoin.initEccLib(ecc);
@@ -27,6 +28,7 @@ const PURPOSES: Record<AddressType, number> = {
 
 export interface UtxoAccount {
   address: string;
+  path: string;
   /** Compressed public key, hex */
   publicKey: string;
   wif: string;
@@ -55,22 +57,79 @@ function getAddress(key: BIP32Interface, type: AddressType, chain: UtxoChain) {
   }
 }
 
-/** Root key of a BIP39 seed for a chain */
-export function getRootKey(seed: Uint8Array, chain: UtxoChain) {
-  return bip32.fromSeed(Buffer.from(seed), chain.network);
+/*
+ * Root and parent keys by seed, then by chain and path. A derive job reuses
+ * one seed object for every account, so accounts that differ only in their
+ * last index share all the parent derivation. Entries go away with the seed.
+ */
+const cachedKeys = new WeakMap<Uint8Array, Map<string, BIP32Interface>>();
+
+function getCachedKey(
+  seed: Uint8Array,
+  cacheKey: string,
+  create: () => BIP32Interface,
+) {
+  let keys = cachedKeys.get(seed);
+
+  if (!keys) {
+    keys = new Map();
+    cachedKeys.set(seed, keys);
+  }
+
+  let key = keys.get(cacheKey);
+
+  if (!key) {
+    key = create();
+    keys.set(cacheKey, key);
+  }
+
+  return key;
 }
 
-/** Derives the first receiving account of an address type: m/purpose'/coin'/0'/0/0 */
+/** Root key of a BIP39 seed for a chain */
+export function getRootKey(seed: Uint8Array, chain: UtxoChain) {
+  return getCachedKey(seed, `${chain.coinType}:m`, () =>
+    bip32.fromSeed(Buffer.from(seed), chain.network),
+  );
+}
+
+/** Key at a resolved path, reusing its parent from earlier calls */
+function deriveCachedPath(seed: Uint8Array, chain: UtxoChain, path: string) {
+  const cut = path.lastIndexOf("/");
+  const parentPath = path.slice(0, cut);
+  const parent = getCachedKey(seed, `${chain.coinType}:${parentPath}`, () =>
+    getRootKey(seed, chain).derivePath(parentPath),
+  );
+
+  return parent.derivePath(path.slice(cut + 1));
+}
+
+/**
+ * Derives an account of an address type. The template may use {purpose},
+ * {coin} and {i}, e.g. m/{purpose}'/{coin}'/0'/0/{i}.
+ */
 export function deriveUtxoAccount(
-  root: BIP32Interface,
+  seed: Uint8Array,
   chain: UtxoChain,
   type: AddressType,
+  pathTemplate: string,
+  index: number,
 ): UtxoAccount {
-  const path = `m/${PURPOSES[type]}'/${chain.coinType}'/0'/0/0`;
-  const key = root.derivePath(path);
+  const path = resolvePath(pathTemplate, {
+    purpose: PURPOSES[type],
+    coin: chain.coinType,
+    i: index,
+  });
+
+  if (!isValidPath(path)) {
+    throw new Error(`Invalid derivation path: ${path}`);
+  }
+
+  const key = deriveCachedPath(seed, chain, path);
 
   return {
     address: getAddress(key, type, chain)!,
+    path,
     publicKey: Buffer.from(key.publicKey).toString("hex"),
     wif: key.toWIF(),
   };

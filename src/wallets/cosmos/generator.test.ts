@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { CosmosWallet } from "./fields";
 import { TEST_MNEMONIC } from "../../test/vectors";
-import { deriveCosmosWallet } from "./generator";
+import { deriveAccount } from "../../test/derive";
+import { derive } from "./generator";
+import { presets } from "./presets";
 
-describe("deriveCosmosWallet", () => {
+describe("derive", () => {
   it("matches the published Cosmos and Osmosis vectors", async () => {
-    const wallet = await deriveCosmosWallet(TEST_MNEMONIC);
+    const wallet = await deriveAccount(derive, TEST_MNEMONIC, presets[0].path);
 
     /* Ledger Live cryptoassets abandonseed.ts (cosmos, osmo) */
     expect(wallet[CosmosWallet.COSMOS_ADDRESS]).toBe(

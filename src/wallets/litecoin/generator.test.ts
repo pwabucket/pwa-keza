@@ -2,11 +2,17 @@ import { describe, expect, it } from "vitest";
 
 import { LitecoinWallet } from "./fields";
 import { TEST_MNEMONIC } from "../../test/vectors";
-import { deriveLitecoinWallet } from "./generator";
+import { deriveAccount } from "../../test/derive";
+import { derive } from "./generator";
+import { UTXO_PRESETS } from "../utxo/presets";
 
-describe("deriveLitecoinWallet", () => {
+describe("derive", () => {
   it("matches the published Litecoin vectors for the test mnemonic", async () => {
-    const wallet = await deriveLitecoinWallet(TEST_MNEMONIC);
+    const wallet = await deriveAccount(
+      derive,
+      TEST_MNEMONIC,
+      UTXO_PRESETS[0].path,
+    );
 
     /* Keystone firmware rust/apps/bitcoin/src/addresses/mod.rs */
     expect(wallet[LitecoinWallet.NATIVE_ADDRESS]).toBe(

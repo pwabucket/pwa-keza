@@ -1,4 +1,9 @@
-import { FieldKind, type WalletField, mnemonicPattern } from "../fields";
+import {
+  DERIVATION_PATH_FIELD,
+  FieldKind,
+  mnemonicPattern,
+  type WalletField,
+} from "../fields";
 
 export const SuiWallet = {
   MNEMONIC: "Mnemonic Phrase",
@@ -22,4 +27,5 @@ export const fields: WalletField[] = [
     kind: FieldKind.SECRET,
     pattern: /^suiprivkey1[02-9ac-hj-np-z]{59}$/,
   },
+  DERIVATION_PATH_FIELD,
 ];

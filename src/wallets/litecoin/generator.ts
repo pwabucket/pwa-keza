@@ -1,19 +1,20 @@
-import * as bip39 from "bip39";
-
-import type { WalletResult } from "../../types/wallet";
-import { AddressType, deriveUtxoAccount, getRootKey } from "../utxo/derive";
+import type { WalletDeriver } from "../../types/wallet";
+import { AddressType, deriveUtxoAccount } from "../utxo/derive";
+import { DERIVATION_PATH_FIELD } from "../fields";
 import { LITECOIN } from "../utxo/networks";
 import { LitecoinWallet } from "./fields";
+import { UTXO_PRESETS } from "../utxo/presets";
+import { createBip39Generator, resolvePath } from "../derive";
 
-export type LitecoinWalletResult = WalletResult<typeof LitecoinWallet>;
-
-/** Litecoin addresses of a mnemonic; the key pair is the Native SegWit one */
-export async function deriveLitecoinWallet(
-  mnemonic: string,
-): Promise<LitecoinWalletResult> {
-  const root = getRootKey(await bip39.mnemonicToSeed(mnemonic), LITECOIN);
+/** Litecoin addresses of a phrase; the key pair is the Native SegWit one */
+export const derive: WalletDeriver = async ({
+  mnemonic,
+  seed,
+  index,
+  pathTemplate,
+}) => {
   const account = (type: AddressType) =>
-    deriveUtxoAccount(root, LITECOIN, type);
+    deriveUtxoAccount(seed, LITECOIN, type, pathTemplate, index);
   const native = account(AddressType.NATIVE_SEGWIT);
 
   return {
@@ -23,9 +24,11 @@ export async function deriveLitecoinWallet(
     [LitecoinWallet.LEGACY_ADDRESS]: account(AddressType.LEGACY).address,
     [LitecoinWallet.PUBLIC_KEY]: native.publicKey,
     [LitecoinWallet.PRIVATE_KEY]: native.wif,
+    [DERIVATION_PATH_FIELD.label]: resolvePath(pathTemplate, {
+      coin: LITECOIN.coinType,
+      i: index,
+    }),
   };
-}
+};
 
-export default function generateLitecoinWallet() {
-  return deriveLitecoinWallet(bip39.generateMnemonic());
-}
+export default createBip39Generator(derive, UTXO_PRESETS[0].path);

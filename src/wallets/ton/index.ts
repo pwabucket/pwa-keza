@@ -1,3 +1,4 @@
+import { MnemonicType } from "../derive";
 import { defineWalletModule } from "../define";
 import { TONWallet, fields } from "./fields";
 import Icon from "./icon.svg";
@@ -7,6 +8,11 @@ export default defineWalletModule({
   title: "TON Wallets",
   icon: Icon,
   fields,
+  derive: {
+    mnemonic: MnemonicType.TON,
+    presets: [],
+    customPath: false,
+  },
   order: 60,
   tags: ["TON", "NOT", "DOGS"],
   supportsTestnet: true,

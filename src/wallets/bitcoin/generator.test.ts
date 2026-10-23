@@ -2,11 +2,17 @@ import { describe, expect, it } from "vitest";
 
 import { BitcoinWallet } from "./fields";
 import { TEST_MNEMONIC } from "../../test/vectors";
-import { deriveBitcoinWallet } from "./generator";
+import { deriveAccount } from "../../test/derive";
+import { derive } from "./generator";
+import { UTXO_PRESETS } from "../utxo/presets";
 
-describe("deriveBitcoinWallet", () => {
+describe("derive", () => {
   it("matches the BIP44/49/84/86 mainnet vectors", async () => {
-    const wallet = await deriveBitcoinWallet(TEST_MNEMONIC);
+    const wallet = await deriveAccount(
+      derive,
+      TEST_MNEMONIC,
+      UTXO_PRESETS[0].path,
+    );
 
     /* https://github.com/bitcoin/bips/blob/master/bip-0086.mediawiki */
     expect(wallet[BitcoinWallet.TAPROOT_ADDRESS]).toBe(
@@ -26,7 +32,12 @@ describe("deriveBitcoinWallet", () => {
   });
 
   it("matches the BIP49/84 testnet vectors", async () => {
-    const wallet = await deriveBitcoinWallet(TEST_MNEMONIC, { testnet: true });
+    const wallet = await deriveAccount(
+      derive,
+      TEST_MNEMONIC,
+      UTXO_PRESETS[0].path,
+      { testnet: true },
+    );
 
     /* https://github.com/bitcoin/bips/blob/master/bip-0084.mediawiki */
     expect(wallet[BitcoinWallet.NATIVE_ADDRESS]).toBe(

@@ -1,21 +1,31 @@
+import { SigningKey, hexlify } from "ethers";
 import { utils } from "tronweb";
-import type { WalletResult } from "../../types/wallet";
+
+import type { WalletDeriver } from "../../types/wallet";
+import { DERIVATION_PATH_FIELD } from "../fields";
 import { TronWallet } from "./fields";
+import { createBip39Generator, resolveIndexPath } from "../derive";
+import { deriveHDKey } from "../hdKey";
+import { presets } from "./presets";
 
-export type TronWalletResult = WalletResult<typeof TronWallet>;
-export type TronWalletGeneratorArguments = Parameters<
-  typeof generateTronWallet
->;
-
-export async function generateTronWallet(): Promise<TronWalletResult> {
-  const account = utils.accounts.generateRandom();
+/** Tron account of a phrase at a path, in the formats TronWeb uses */
+export const derive: WalletDeriver = async ({
+  mnemonic,
+  seed,
+  index,
+  pathTemplate,
+}) => {
+  const path = resolveIndexPath(pathTemplate, index);
+  const privateKey = hexlify(deriveHDKey(seed, path).privateKey!);
 
   return {
-    [TronWallet.ADDRESS]: account.address,
-    [TronWallet.PUBLIC_KEY]: account.publicKey,
-    [TronWallet.PRIVATE_KEY]: account.privateKey,
-    [TronWallet.PHRASE]: account.mnemonic?.phrase || "",
+    [TronWallet.ADDRESS]: utils.crypto.pkToAddress(privateKey.slice(2)),
+    /* Uncompressed, as TronWeb reports it */
+    [TronWallet.PUBLIC_KEY]: SigningKey.computePublicKey(privateKey),
+    [TronWallet.PRIVATE_KEY]: privateKey,
+    [TronWallet.PHRASE]: mnemonic,
+    [DERIVATION_PATH_FIELD.label]: path,
   };
-}
+};
 
-export default generateTronWallet;
+export default createBip39Generator(derive, presets[0].path);

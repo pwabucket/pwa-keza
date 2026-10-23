@@ -1,4 +1,6 @@
+import { MnemonicType } from "../derive";
 import { defineWalletModule } from "../define";
+import { presets } from "./presets";
 import { EVMWallet, fields } from "./fields";
 import Icon from "./icon.svg";
 
@@ -7,6 +9,11 @@ export default defineWalletModule({
   title: "EVM Wallets",
   icon: Icon,
   fields,
+  derive: {
+    mnemonic: MnemonicType.BIP39,
+    presets: presets,
+    customPath: true,
+  },
   order: 40,
   tags: ["ETH", "BNB", "POL"],
   getParcelConfig(wallets) {

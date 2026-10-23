@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { SuiWallet } from "./fields";
 import { TEST_MNEMONIC } from "../../test/vectors";
-import { deriveSuiWallet } from "./generator";
+import { deriveAccount } from "../../test/derive";
+import { derive } from "./generator";
+import { presets } from "./presets";
 
-describe("deriveSuiWallet", () => {
+describe("derive", () => {
   it("matches the published Sui vector for the test mnemonic", async () => {
-    const wallet = await deriveSuiWallet(TEST_MNEMONIC);
+    const wallet = await deriveAccount(derive, TEST_MNEMONIC, presets[0].path);
 
     /* klever-io/kos-rs packages/kos/src/chains/sui/mod.rs */
     expect(wallet[SuiWallet.ADDRESS]).toBe(

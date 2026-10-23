@@ -12,7 +12,7 @@ export type MnemonicWalletGeneratorArguments = Parameters<
 >;
 
 export async function generateMnemonicPhrase(
-  strength: 12 | 24 = 12
+  strength: 12 | 24 = 12,
 ): Promise<MnemonicWalletResult> {
   const mnemonic = generateMnemonic(strength === 12 ? 128 : 256);
 

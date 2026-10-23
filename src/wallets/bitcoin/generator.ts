@@ -1,20 +1,22 @@
-import * as bip39 from "bip39";
-
-import type { WalletGeneratorOptions, WalletResult } from "../../types/wallet";
-import { AddressType, deriveUtxoAccount, getRootKey } from "../utxo/derive";
+import type { WalletDeriver } from "../../types/wallet";
+import { AddressType, deriveUtxoAccount } from "../utxo/derive";
 import { BITCOIN, BITCOIN_TESTNET } from "../utxo/networks";
 import { BitcoinWallet } from "./fields";
+import { DERIVATION_PATH_FIELD } from "../fields";
+import { UTXO_PRESETS } from "../utxo/presets";
+import { createBip39Generator, resolvePath } from "../derive";
 
-export type BitcoinWalletResult = WalletResult<typeof BitcoinWallet>;
-
-/** Bitcoin addresses of a mnemonic; the key pair is the Taproot one */
-export async function deriveBitcoinWallet(
-  mnemonic: string,
-  { testnet = false }: WalletGeneratorOptions = {},
-): Promise<BitcoinWalletResult> {
+/** Bitcoin addresses of a phrase; the key pair is the Taproot one */
+export const derive: WalletDeriver = async ({
+  mnemonic,
+  seed,
+  index,
+  pathTemplate,
+  testnet = false,
+}) => {
   const chain = testnet ? BITCOIN_TESTNET : BITCOIN;
-  const root = getRootKey(await bip39.mnemonicToSeed(mnemonic), chain);
-  const account = (type: AddressType) => deriveUtxoAccount(root, chain, type);
+  const account = (type: AddressType) =>
+    deriveUtxoAccount(seed, chain, type, pathTemplate, index);
   const taproot = account(AddressType.TAPROOT);
 
   return {
@@ -25,9 +27,11 @@ export async function deriveBitcoinWallet(
     [BitcoinWallet.LEGACY_ADDRESS]: account(AddressType.LEGACY).address,
     [BitcoinWallet.PUBLIC_KEY]: taproot.publicKey,
     [BitcoinWallet.PRIVATE_KEY]: taproot.wif,
+    [DERIVATION_PATH_FIELD.label]: resolvePath(pathTemplate, {
+      coin: chain.coinType,
+      i: index,
+    }),
   };
-}
+};
 
-export default function generateBitcoinWallet(options: WalletGeneratorOptions) {
-  return deriveBitcoinWallet(bip39.generateMnemonic(), options);
-}
+export default createBip39Generator(derive, UTXO_PRESETS[0].path);

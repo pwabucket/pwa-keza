@@ -1,4 +1,9 @@
-import { FieldKind, type WalletField, mnemonicPattern } from "../fields";
+import {
+  DERIVATION_PATH_FIELD,
+  FieldKind,
+  mnemonicPattern,
+  type WalletField,
+} from "../fields";
 
 export const EVMWallet = {
   ADDRESS: "Address",
@@ -28,4 +33,5 @@ export const fields: WalletField[] = [
     kind: FieldKind.MNEMONIC,
     pattern: mnemonicPattern(12),
   },
+  DERIVATION_PATH_FIELD,
 ];

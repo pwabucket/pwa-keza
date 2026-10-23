@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { NEARWallet } from "./fields";
 import { TEST_MNEMONIC } from "../../test/vectors";
-import { deriveNEARWallet } from "./generator";
+import { deriveAccount } from "../../test/derive";
+import { derive } from "./generator";
+import { presets } from "./presets";
 
-describe("deriveNEARWallet", () => {
+describe("derive", () => {
   it("matches the published NEAR vector for the test mnemonic", async () => {
-    const wallet = await deriveNEARWallet(TEST_MNEMONIC);
+    const wallet = await deriveAccount(derive, TEST_MNEMONIC, presets[0].path);
 
     /* gemwalletcom/wallet core/crates/gem_near/src/address.rs; near-seed-phrase agrees */
     expect(wallet[NEARWallet.PUBLIC_KEY]).toBe(

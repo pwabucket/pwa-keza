@@ -1,5 +1,6 @@
 import {
   BASE58,
+  DERIVATION_PATH_FIELD,
   FieldKind,
   type WalletField,
   mnemonicPattern,
@@ -56,4 +57,5 @@ export const fields: WalletField[] = [
     kind: FieldKind.SECRET,
     pattern: new RegExp(`^[KLc]${BASE58}{51}$`),
   },
+  DERIVATION_PATH_FIELD,
 ];

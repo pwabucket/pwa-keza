@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { TEST_MNEMONIC } from "../../test/vectors";
 import { XRPWallet } from "./fields";
-import { deriveXRPWallet } from "./generator";
+import { deriveAccount } from "../../test/derive";
+import { derive } from "./generator";
+import { presets } from "./presets";
 
-describe("deriveXRPWallet", () => {
+describe("derive", () => {
   it("matches the published XRP vector for the test mnemonic", async () => {
-    const wallet = await deriveXRPWallet(TEST_MNEMONIC);
+    const wallet = await deriveAccount(derive, TEST_MNEMONIC, presets[0].path);
 
     /* Ledger Live cryptoassets abandonseed.ts (ripple); also xrpl.js Wallet.fromMnemonic */
     expect(wallet[XRPWallet.ADDRESS]).toBe(

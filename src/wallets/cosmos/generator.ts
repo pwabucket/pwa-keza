@@ -1,4 +1,3 @@
-import * as bip39 from "bip39";
 import {
   Secp256k1,
   Slip10,
@@ -9,23 +8,24 @@ import {
 } from "@cosmjs/crypto";
 import { toBech32, toHex } from "@cosmjs/encoding";
 
-import type { WalletResult } from "../../types/wallet";
+import type { WalletDeriver } from "../../types/wallet";
 import { CosmosWallet } from "./fields";
+import { DERIVATION_PATH_FIELD } from "../fields";
+import { createBip39Generator, resolveIndexPath } from "../derive";
+import { presets } from "./presets";
 
-export type CosmosWalletResult = WalletResult<typeof CosmosWallet>;
-
-/** Cosmos Hub path, shared by Osmosis and used by Keplr */
-const COSMOS_PATH = stringToPath("m/44'/118'/0'/0/0");
-
-/** Cosmos Hub and Osmosis addresses of a mnemonic, which share one key */
-export async function deriveCosmosWallet(
-  mnemonic: string,
-): Promise<CosmosWalletResult> {
-  const seed = await bip39.mnemonicToSeed(mnemonic);
+/** Cosmos Hub and Osmosis addresses of a phrase, which share one key */
+export const derive: WalletDeriver = async ({
+  mnemonic,
+  seed,
+  index,
+  pathTemplate,
+}) => {
+  const path = resolveIndexPath(pathTemplate, index);
   const { privkey } = Slip10.derivePath(
     Slip10Curve.Secp256k1,
     seed,
-    COSMOS_PATH,
+    stringToPath(path),
   );
   const { pubkey } = await Secp256k1.makeKeypair(privkey);
   const publicKey = Secp256k1.compressPubkey(pubkey);
@@ -37,9 +37,8 @@ export async function deriveCosmosWallet(
     [CosmosWallet.OSMOSIS_ADDRESS]: toBech32("osmo", rawAddress),
     [CosmosWallet.PUBLIC_KEY]: toHex(publicKey),
     [CosmosWallet.PRIVATE_KEY]: toHex(privkey),
+    [DERIVATION_PATH_FIELD.label]: path,
   };
-}
+};
 
-export default function generateCosmosWallet() {
-  return deriveCosmosWallet(bip39.generateMnemonic());
-}
+export default createBip39Generator(derive, presets[0].path);

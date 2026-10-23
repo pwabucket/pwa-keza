@@ -2,11 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { AptosWallet } from "./fields";
 import { TEST_MNEMONIC } from "../../test/vectors";
-import { deriveAptosWallet } from "./generator";
+import { deriveAccount } from "../../test/derive";
+import { derive } from "./generator";
+import { presets } from "./presets";
 
-describe("deriveAptosWallet", () => {
+describe("derive", () => {
   it("matches the published Aptos vector for the test mnemonic", async () => {
-    const wallet = await deriveAptosWallet(TEST_MNEMONIC);
+    const wallet = await deriveAccount(derive, TEST_MNEMONIC, presets[0].path);
 
     /* aptos-labs/aptos-rust-sdk crates/aptos-sdk/src/account/mnemonic.rs */
     expect(wallet[AptosWallet.ADDRESS]).toBe(

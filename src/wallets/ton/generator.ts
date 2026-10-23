@@ -2,17 +2,13 @@ import { Buffer } from "buffer";
 import { WalletContractV4, WalletContractV5R1 } from "@ton/ton";
 import { mnemonicNew, mnemonicToPrivateKey } from "@ton/crypto";
 
-import type { WalletResult } from "../../types/wallet";
+import type { WalletDeriver, WalletGenerator } from "../../types/wallet";
 import { TONWallet } from "./fields";
 
-export type TONWalletResult = WalletResult<typeof TONWallet>;
-export type TONWalletGeneratorArguments = Parameters<typeof generateTONWallet>;
-
-export async function generateTONWallet({
-  testnet = false,
-}: { testnet?: boolean } = {}): Promise<TONWalletResult> {
-  const mnemonic = await mnemonicNew();
-  const keyPair = await mnemonicToPrivateKey(mnemonic);
+/** TON wallet of a TON-native 24-word phrase, which has a single key */
+export const derive: WalletDeriver = async ({ mnemonic, testnet = false }) => {
+  const words = mnemonic.split(" ");
+  const keyPair = await mnemonicToPrivateKey(words);
 
   const workchain = 0;
   const walletV4 = WalletContractV4.create({
@@ -39,8 +35,17 @@ export async function generateTONWallet({
     [TONWallet.ADDRESS_V4]: addressV4,
     [TONWallet.PUBLIC_KEY]: Buffer.from(keyPair.publicKey).toString("hex"),
     [TONWallet.SECRET_KEY]: Buffer.from(keyPair.secretKey).toString("hex"),
-    [TONWallet.PHRASE]: mnemonic.join(" "),
+    [TONWallet.PHRASE]: mnemonic,
   };
-}
+};
+
+const generateTONWallet: WalletGenerator = async ({ testnet }) =>
+  derive({
+    mnemonic: (await mnemonicNew()).join(" "),
+    seed: new Uint8Array(),
+    index: 0,
+    pathTemplate: "",
+    testnet,
+  });
 
 export default generateTONWallet;

@@ -1,19 +1,21 @@
-import * as bip39 from "bip39";
 import { Ed25519PrivateKey } from "@aptos-labs/ts-sdk/crypto";
 
-import type { WalletResult } from "../../types/wallet";
+import type { WalletDeriver } from "../../types/wallet";
 import { AptosWallet } from "./fields";
+import { DERIVATION_PATH_FIELD } from "../fields";
+import { createBip39Generator, resolveIndexPath } from "../derive";
+import { deriveEd25519Seed } from "../slip10";
+import { presets } from "./presets";
 
-export type AptosWalletResult = WalletResult<typeof AptosWallet>;
-
-/** First account path of Petra */
-const APTOS_PATH = "m/44'/637'/0'/0'/0'";
-
-/** Aptos account of a mnemonic, with the AIP-80 key wallets import */
-export async function deriveAptosWallet(
-  mnemonic: string,
-): Promise<AptosWalletResult> {
-  const privateKey = Ed25519PrivateKey.fromDerivationPath(APTOS_PATH, mnemonic);
+/** Aptos account of a phrase at a path, with the AIP-80 key wallets import */
+export const derive: WalletDeriver = async ({
+  mnemonic,
+  seed,
+  index,
+  pathTemplate,
+}) => {
+  const path = resolveIndexPath(pathTemplate, index);
+  const privateKey = new Ed25519PrivateKey(await deriveEd25519Seed(seed, path));
   const publicKey = privateKey.publicKey();
 
   return {
@@ -21,9 +23,8 @@ export async function deriveAptosWallet(
     [AptosWallet.ADDRESS]: publicKey.authKey().derivedAddress().toStringLong(),
     [AptosWallet.PUBLIC_KEY]: publicKey.toString(),
     [AptosWallet.PRIVATE_KEY]: privateKey.toAIP80String(),
+    [DERIVATION_PATH_FIELD.label]: path,
   };
-}
+};
 
-export default function generateAptosWallet() {
-  return deriveAptosWallet(bip39.generateMnemonic());
-}
+export default createBip39Generator(derive, presets[0].path);
