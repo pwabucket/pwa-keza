@@ -17,9 +17,12 @@ const getExportFilename = (base: string) => {
 export default function DownloadDialog({
   data,
   filename,
+  onExport,
 }: {
   data: Record<string, string>[];
   filename: string;
+  /** Called after the data has been handed off for saving */
+  onExport?: () => void;
 }) {
   const download = useCallback(
     (exportType: ExportType) => {
@@ -28,8 +31,9 @@ export default function DownloadDialog({
         fileName: getExportFilename(filename),
         exportType,
       });
+      onExport?.();
     },
-    [data, filename]
+    [data, filename, onExport]
   );
 
   const encryptWithSafe = useCallback(() => {
@@ -51,8 +55,9 @@ export default function DownloadDialog({
         type: "text/plain",
         lastModified: Date.now(),
       }),
+      onHandoff: onExport,
     });
-  }, [filename, data]);
+  }, [filename, data, onExport]);
 
   const getFileIcon = (type: ExportType) => {
     switch (type) {

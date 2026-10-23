@@ -1,7 +1,7 @@
 import { Wallet } from "ethers";
 
 import type { WalletResult } from "../../types/wallet";
-import { EVMWallet } from "./constants";
+import { EVMWallet } from "./fields";
 
 export type EVMWalletResult = WalletResult<typeof EVMWallet>;
 export type EVMWalletGeneratorArguments = Parameters<typeof generateEVMWallet>;

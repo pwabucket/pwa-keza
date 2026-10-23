@@ -2,6 +2,7 @@ import * as Comlink from "comlink";
 import { useCallback, useEffect, useRef, useState } from "react";
 
 import useFrameBuffer from "./useFrameBuffer";
+import useSession from "./useSession";
 import { JobStatus } from "../workers/protocol";
 import { splitCount } from "../lib/count";
 import { walletPool } from "../workers/walletPool";
@@ -21,15 +22,14 @@ export interface JobProgress {
   startedAt: number;
 }
 
-/** Generates wallets on the worker pool, streaming rows as they arrive */
+/** Generates wallets on the worker pool, streaming rows into the session */
 export default function useWalletJob(moduleId: string) {
-  const {
-    items: rows,
-    push,
-    flush,
-    reset,
-    getSize,
-  } = useFrameBuffer<WalletRow>();
+  const setRows = useSession((state) => state.setRows);
+  const commitRows = useCallback(
+    (rows: WalletRow[]) => setRows(rows, true),
+    [setRows],
+  );
+  const { push, flush, reset, getSize } = useFrameBuffer(commitRows);
   const [status, setStatus] = useState<JobStatus>(JobStatus.IDLE);
   const [progress, setProgress] = useState<JobProgress>({
     total: 0,
@@ -90,5 +90,5 @@ export default function useWalletJob(moduleId: string) {
   /* Leaving the page stops a running job */
   useEffect(() => () => abortRef.current?.abort(), []);
 
-  return { rows, status, progress, start, cancel };
+  return { status, progress, start, cancel };
 }

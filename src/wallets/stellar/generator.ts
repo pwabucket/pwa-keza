@@ -1,11 +1,7 @@
 import { Keypair } from "@stellar/stellar-sdk";
 
 import type { WalletResult } from "../../types/wallet";
-
-export const StellarWallet = {
-  ADDRESS: "Address",
-  SECRET_KEY: "Secret Key",
-} as const;
+import { StellarWallet } from "./fields";
 
 export type StellarWalletResult = WalletResult<typeof StellarWallet>;
 export type StellarWalletGeneratorArguments = Parameters<

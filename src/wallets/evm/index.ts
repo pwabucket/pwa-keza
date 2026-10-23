@@ -1,13 +1,14 @@
-import type { WalletModule } from "../../types/wallet";
-import { EVMWallet } from "./constants";
+import { defineWalletModule } from "../define";
+import { EVMWallet, fields } from "./fields";
 import Icon from "./icon.svg";
 
-export default {
+export default defineWalletModule({
   id: "evm",
   title: "EVM Wallets",
   icon: Icon,
+  fields,
   tags: ["ETH", "BNB", "POL"],
-  getParcelConfig(wallets: Record<string, string>[]) {
+  getParcelConfig(wallets) {
     return {
       group: "evm",
       recipients: wallets.map((w) => w[EVMWallet.ADDRESS]),
@@ -17,4 +18,4 @@ export default {
       })),
     };
   },
-} satisfies WalletModule;
+});

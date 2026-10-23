@@ -1,88 +1,43 @@
-import toast from "react-hot-toast";
-import { useCallback } from "react";
-
+import ConfirmDialog from "./ui/ConfirmDialog";
 import HeaderTitle from "../layouts/HeaderTitle";
 import InnerAppLayout from "../layouts/InnerAppLayout";
 import JobProgress from "./JobProgress";
-import WalletGeneratorInput from "../components/WalletGeneratorInput";
-import WalletList from "./WalletList";
-import useWallets from "../hooks/useWallets";
-import useGeneratorContext from "../hooks/useGeneratorContext";
-import useWalletJob, { type JobResult } from "../hooks/useWalletJob";
+import UnsavedGuard from "./wallet/UnsavedGuard";
+import WalletGeneratorInput from "./WalletGeneratorInput";
+import WalletList from "./wallet/WalletList";
+import useGenerateWallets from "../hooks/useGenerateWallets";
+import useSession from "../hooks/useSession";
 import { JobStatus } from "../workers/protocol";
-import { MIN_WALLET_COUNT, clampCount, parseCount } from "../lib/count";
+import type { WalletModule } from "../types/wallet";
 
-const numberFormat = new Intl.NumberFormat();
-
-/** Tells the user how a finished job went */
-function reportJobResult({ status, count, error }: JobResult, total: number) {
-  switch (status) {
-    case JobStatus.DONE:
-      toast.success(`Generated ${numberFormat.format(count)} wallets.`, {
-        id: "job",
-      });
-      break;
-    case JobStatus.CANCELLED:
-      toast(
-        `Stopped at ${numberFormat.format(count)} of ${numberFormat.format(total)}.`,
-        { id: "job" },
-      );
-      break;
-    case JobStatus.FAILED:
-      toast.error(
-        `Error: ${error instanceof Error ? error.message : String(error)}`,
-        { id: "job" },
-      );
-      break;
-  }
-}
-
-export default function WalletsGenerator() {
-  const wallet = useGeneratorContext();
-  const { rows, status, progress, start, cancel } = useWalletJob(wallet.id);
-  const { count, expanded, setExpanded, setCount, isTestnet, setIsTestnet } =
-    useWallets(wallet.defaultExpanded ?? false);
+export default function WalletsGenerator({ module }: { module: WalletModule }) {
+  const rowCount = useSession((state) => state.rows.length);
+  const {
+    status,
+    progress,
+    generate,
+    cancel,
+    isConfirming,
+    confirmReplace,
+    cancelReplace,
+  } = useGenerateWallets(module.id);
   const isGenerating = status === JobStatus.RUNNING;
-
-  /* Generate wallets */
-  const generateWallets = useCallback(async () => {
-    const parsedCount = parseCount(count);
-
-    if (parsedCount === null || parsedCount < MIN_WALLET_COUNT) {
-      toast.error("Enter how many wallets to generate.", { id: "count" });
-      return;
-    }
-
-    const total = clampCount(parsedCount);
-
-    setCount(total);
-
-    const result = await start(total, { testnet: isTestnet });
-
-    if (result) {
-      reportJobResult(result, total);
-    }
-  }, [count, isTestnet, setCount, start]);
 
   return (
     <InnerAppLayout
       headerMiddleContent={
-        <HeaderTitle icon={wallet.icon}>{wallet.title}</HeaderTitle>
+        <HeaderTitle icon={module.icon}>{module.title}</HeaderTitle>
       }
     >
       <WalletGeneratorInput
-        count={count}
-        setCount={setCount}
-        generate={generateWallets}
+        onGenerate={generate}
         isGenerating={isGenerating}
-        isTestnet={isTestnet}
-        setIsTestnet={setIsTestnet}
-        supportsTestnet={wallet.supportsTestnet || false}
+        supportsTestnet={module.supportsTestnet ?? false}
       />
 
       {isGenerating ? (
         <JobProgress
-          done={rows.length}
+          done={rowCount}
           total={progress.total}
           startedAt={progress.startedAt}
           onStop={cancel}
@@ -90,17 +45,21 @@ export default function WalletsGenerator() {
         />
       ) : null}
 
-      {rows.length > 0 ? (
-        <WalletList
-          id={wallet.id}
-          wallets={rows}
-          expanded={expanded}
-          setExpanded={setExpanded}
-          getParcelConfig={wallet.getParcelConfig}
-        />
+      {rowCount > 0 ? (
+        <WalletList />
       ) : isGenerating ? null : (
         <p className="italic text-center p-4">Click Generate to start...</p>
       )}
+
+      <ConfirmDialog
+        open={isConfirming}
+        title="Replace your wallets?"
+        description="The wallets on this page haven't been downloaded. Generating again will replace them."
+        confirmLabel="Replace"
+        onConfirm={confirmReplace}
+        onCancel={cancelReplace}
+      />
+      <UnsavedGuard />
     </InnerAppLayout>
   );
 }

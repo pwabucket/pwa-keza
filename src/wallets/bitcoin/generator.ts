@@ -5,16 +5,7 @@ import BIP32Factory from "bip32";
 import { Buffer } from "buffer";
 
 import type { WalletResult } from "../../types/wallet";
-
-export const BitcoinWallet = {
-  MNEMONIC: "Mnemonic Phrase",
-  TAPROOT_ADDRESS: "Taproot Address (P2TR)",
-  NESTED_ADDRESS: "Nested SegWit Address (P2SH-P2WPKH)",
-  NATIVE_ADDRESS: "Native SegWit Address (P2WPKH)",
-  LEGACY_ADDRESS: "Legacy Address (P2PKH)",
-  PUBLIC_KEY: "Public Key",
-  PRIVATE_KEY: "Private Key (WIF)",
-} as const;
+import { BitcoinWallet } from "./fields";
 
 export type BitcoinWalletResult = WalletResult<typeof BitcoinWallet>;
 export type BitcoinWalletGeneratorArguments = Parameters<

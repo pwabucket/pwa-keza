@@ -1,18 +1,17 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef } from "react";
 
 /**
- * Collects items pushed at any rate and commits them to state at most once
- * per animation frame.
+ * Collects items pushed at any rate and hands the full list to `onCommit`
+ * at most once per animation frame.
  */
-export default function useFrameBuffer<T>() {
-  const [items, setItems] = useState<T[]>([]);
+export default function useFrameBuffer<T>(onCommit: (items: T[]) => void) {
   const bufferRef = useRef<T[]>([]);
   const frameRef = useRef(0);
 
   const commit = useCallback(() => {
     frameRef.current = 0;
-    setItems(bufferRef.current.slice());
-  }, []);
+    onCommit(bufferRef.current.slice());
+  }, [onCommit]);
 
   const push = useCallback(
     (chunk: T[]) => {
@@ -31,17 +30,17 @@ export default function useFrameBuffer<T>() {
     commit();
   }, [commit]);
 
+  /** Empties the buffer and commits the empty list */
   const reset = useCallback(() => {
     cancelAnimationFrame(frameRef.current);
-    frameRef.current = 0;
     bufferRef.current = [];
-    setItems([]);
-  }, []);
+    commit();
+  }, [commit]);
 
   /** Number of items pushed so far, including uncommitted ones */
   const getSize = useCallback(() => bufferRef.current.length, []);
 
   useEffect(() => () => cancelAnimationFrame(frameRef.current), []);
 
-  return { items, push, flush, reset, getSize };
+  return { push, flush, reset, getSize };
 }

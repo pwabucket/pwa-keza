@@ -2,11 +2,7 @@ import { Buffer } from "buffer";
 import { Keypair } from "@solana/web3.js";
 
 import type { WalletResult } from "../../types/wallet";
-
-export const SolanaWallet = {
-  ADDRESS: "Address",
-  SECRET_KEY: "Secret Key",
-} as const;
+import { SolanaWallet } from "./fields";
 
 export type SolanaWalletResult = WalletResult<typeof SolanaWallet>;
 export type SolanaWalletGeneratorArguments = Parameters<

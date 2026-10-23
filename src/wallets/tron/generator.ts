@@ -1,12 +1,6 @@
 import { utils } from "tronweb";
 import type { WalletResult } from "../../types/wallet";
-
-export const TronWallet = {
-  ADDRESS: "Address",
-  PHRASE: "Phrase",
-  PUBLIC_KEY: "Public Key",
-  PRIVATE_KEY: "Private Key",
-} as const;
+import { TronWallet } from "./fields";
 
 export type TronWalletResult = WalletResult<typeof TronWallet>;
 export type TronWalletGeneratorArguments = Parameters<

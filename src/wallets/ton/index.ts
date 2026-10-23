@@ -1,11 +1,12 @@
-import type { WalletModule } from "../../types/wallet";
-import { TONWallet } from "./constants";
+import { defineWalletModule } from "../define";
+import { TONWallet, fields } from "./fields";
 import Icon from "./icon.svg";
 
-export default {
+export default defineWalletModule({
   id: "ton",
   title: "TON Wallets",
   icon: Icon,
+  fields,
   tags: ["TON", "NOT", "DOGS"],
   supportsTestnet: true,
   getParcelConfig(wallets, { version = 5 }: { version?: number } = {}) {
@@ -30,4 +31,4 @@ export default {
             })),
     };
   },
-} satisfies WalletModule;
+});
