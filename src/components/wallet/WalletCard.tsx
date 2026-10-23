@@ -41,12 +41,13 @@ export default memo(function WalletCard({
         "hover:border-yellow-500",
       )}
     >
-      <div className="flex px-2 gap-2 items-center">
-        <h2 className="text-lg font-extralight grow min-w-0 truncate">
+      {/* The buttons wrap below the title when both don't fit */}
+      <div className="flex flex-wrap px-2 gap-2 items-center">
+        <h2 className="text-lg font-extralight grow min-w-0 wrap-break-word">
           {title}
         </h2>
 
-        <div className="flex shrink-0 gap-2">
+        <div className="flex shrink-0 gap-2 ml-auto">
           <IconButton
             label={`Copy ${title}`}
             onClick={() =>
