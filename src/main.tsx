@@ -2,10 +2,9 @@ import App from "./App.tsx";
 import { PWARouter } from "@pwabucket/pwa-router";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
-import { registerSW } from "virtual:pwa-register";
+import { registerServiceWorker } from "./registerServiceWorker";
 
-/** Register Service Worker */
-registerSW({ immediate: true });
+registerServiceWorker();
 
 createRoot(document.getElementById("root")!).render(
   <StrictMode>

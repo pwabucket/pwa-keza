@@ -67,7 +67,7 @@ const ParcelDialog = ({
 
         {/* Title */}
         <Dialog.Title className="flex items-center justify-center gap-2 grow min-w-0">
-          <img src={ParcelIcon} className="size-6" />
+          <img src={ParcelIcon} alt="" className="size-6" />
           Parcel
         </Dialog.Title>
 

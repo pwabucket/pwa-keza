@@ -1,6 +1,7 @@
 import toast from "react-hot-toast";
 import { useCallback, useState } from "react";
 
+import HeaderTitle from "../layouts/HeaderTitle";
 import InnerAppLayout from "../layouts/InnerAppLayout";
 import WalletGeneratorInput from "../components/WalletGeneratorInput";
 import WalletList from "./WalletList";
@@ -64,10 +65,7 @@ export default function WalletsGenerator() {
   return (
     <InnerAppLayout
       headerMiddleContent={
-        <div className="flex justify-center items-center gap-2">
-          <img src={wallet.icon} className="size-8" />{" "}
-          <h1 className="font-bold">{wallet.title}</h1>
-        </div>
+        <HeaderTitle icon={wallet.icon}>{wallet.title}</HeaderTitle>
       }
     >
       <WalletGeneratorInput
@@ -89,7 +87,7 @@ export default function WalletsGenerator() {
           getParcelConfig={wallet.getParcelConfig}
         />
       ) : (
-        <p className="italic text-center p-4">Click generate to start...</p>
+        <p className="italic text-center p-4">Click Generate to start...</p>
       )}
     </InnerAppLayout>
   );

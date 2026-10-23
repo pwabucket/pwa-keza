@@ -5,10 +5,12 @@ import {
 } from "react-icons/io5";
 import { cn, copyToClipboard } from "../lib/utils";
 import { useMemo, useState } from "react";
+import { TiDownloadOutline } from "react-icons/ti";
 
 import { Dialog } from "radix-ui";
 import DownloadDialog from "./DownloadDialog";
 import type { GetParcelConfig } from "../types/wallet";
+import IconButton from "./ui/IconButton";
 import Input from "./Input";
 import { PARCEL_URL } from "../lib/parcel";
 import { ParcelDialog } from "./ParcelDialog";
@@ -59,15 +61,22 @@ export default function WalletList({
 
   return (
     <>
-      <div className="flex gap-2 sticky top-12 z-30 bg-neutral-800 p-4 -mx-4">
+      <div
+        className={cn(
+          "@container flex gap-2 sticky z-30 bg-neutral-800 p-4 -mx-4",
+          "top-[calc(3rem+env(safe-area-inset-top))]",
+        )}
+      >
         {PARCEL_URL && getParcelConfig && (
           <Dialog.Root open={showParcel} onOpenChange={setShowParcel}>
             {/* Parcel Trigger */}
-            <Dialog.Trigger
-              title="Launch Parcel"
-              className={cn("bg-neutral-600 py-2 px-3 rounded-xl", "shrink-0")}
-            >
-              <img src={ParcelIcon} className="size-5" />
+            <Dialog.Trigger asChild>
+              <IconButton
+                label="Launch Parcel"
+                className="bg-neutral-600 py-2 px-3 rounded-xl"
+              >
+                <img src={ParcelIcon} alt="" className="size-5" />
+              </IconButton>
             </Dialog.Trigger>
 
             <ParcelDialog wallets={wallets} getParcelConfig={getParcelConfig} />
@@ -76,38 +85,45 @@ export default function WalletList({
         {/* Download Button */}
         <Dialog.Root open={showDownload} onOpenChange={setShowDownload}>
           <Dialog.Trigger
+            aria-label="Download All"
             className={cn(
               "bg-yellow-500 text-black",
               "px-4 py-2 rounded-xl",
-              "w-full",
+              "w-full min-w-0",
+              "flex items-center justify-center gap-2",
+              "focus-visible:outline-hidden focus-visible:ring-3",
+              "focus-visible:ring-yellow-300",
             )}
           >
-            Download All
+            <TiDownloadOutline className="size-4 shrink-0" />
+            {/* The label shows once the toolbar has room for it */}
+            <span className="hidden @3xs:inline truncate">Download All</span>
           </Dialog.Trigger>
           <DownloadDialog filename={`${id}-wallets`} data={wallets} />
         </Dialog.Root>
 
         {/* Expand Button */}
-        <button
-          title="Toggle Expansion"
+        <IconButton
+          label="Expand values"
+          aria-pressed={expanded}
           onClick={() => setExpanded((prev) => !prev)}
-          className={cn("bg-neutral-600 px-3 py-2 rounded-xl", "shrink-0")}
+          className="bg-neutral-600 px-3 py-2 rounded-xl"
         >
           {expanded ? (
             <IoChevronUpOutline className="size-4" />
           ) : (
             <IoChevronDownOutline className="size-4" />
           )}
-        </button>
+        </IconButton>
 
         {/* Copy Button */}
-        <button
-          title="Copy All"
+        <IconButton
+          label="Copy All"
           onClick={() => copyToClipboard(JSON.stringify(wallets, null, 2))}
-          className={cn("bg-neutral-600 px-3 py-2 rounded-xl", "shrink-0")}
+          className="bg-neutral-600 px-3 py-2 rounded-xl"
         >
           <IoCopyOutline className="size-4" />
-        </button>
+        </IconButton>
       </div>
 
       {/* Download warning */}
@@ -123,11 +139,12 @@ export default function WalletList({
         <Input
           name="search"
           type="search"
+          aria-label="Search wallets"
           placeholder="Search wallets"
           value={search}
           onChange={(e) => setSearch(e.target.value)}
         />
-        <p className="text-center">
+        <p className="text-center" aria-live="polite">
           <span className="font-bold">{search ? "Results" : "Wallets"}:</span>{" "}
           {filteredEntries.length}
         </p>

@@ -23,10 +23,11 @@ const PageLink = ({
       "px-2 py-2 rounded-full bg-neutral-700",
       "flex gap-4",
       "border border-transparent",
-      "hover:border-yellow-500"
+      "hover:border-yellow-500",
+      "focus-visible:outline-hidden focus-visible:border-yellow-500"
     )}
   >
-    <img src={icon} className="shrink-0 size-10 rounded-full" />
+    <img src={icon} alt="" className="shrink-0 size-10 rounded-full" />
     <div className="flex flex-col min-w-0 gap-1">
       <h3 className="font-bold">{title}</h3>
       <div className="flex flex-wrap gap-2">
@@ -76,8 +77,13 @@ const FooterLinks = () => {
 
 export default function Home() {
   return (
-    <AppContainer className="min-h-dvh justify-center gap-4 py-10">
-      <img src={AppIcon} className="h-52 mx-auto" />
+    <AppContainer
+      className={cn(
+        "min-h-dvh justify-center gap-4 py-10",
+        "pt-[max(2.5rem,env(safe-area-inset-top))]"
+      )}
+    >
+      <img src={AppIcon} alt="" className="h-52 mx-auto" />
       <div className="flex flex-col">
         <h1 className="text-center text-4xl font-monoton">
           {import.meta.env.VITE_APP_NAME}

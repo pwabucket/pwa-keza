@@ -1,6 +1,7 @@
 import { Route, Routes } from "@pwabucket/pwa-router";
 
 import Home from "./pages/Home";
+import NotFound from "./pages/NotFound";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Restore from "./pages/Restore";
 import TermsOfUse from "./pages/TermsOfUse";
@@ -20,6 +21,8 @@ function App() {
 
         {/* Terms of Use*/}
         <Route path="terms-of-use" element={<TermsOfUse />} />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
       <Toaster />
     </>

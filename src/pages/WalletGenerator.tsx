@@ -2,6 +2,7 @@ import { useParams } from "@pwabucket/pwa-router";
 import WalletsGenerator from "../components/WalletsGenerator";
 import wallets from "../wallets";
 import GeneratorContext from "../contexts/GeneratorContext";
+import NotFound from "./NotFound";
 
 export default function WalletGenerator() {
   const params = useParams();
@@ -9,7 +10,7 @@ export default function WalletGenerator() {
   const wallet = wallets.find((w) => w.id === id);
 
   if (!wallet) {
-    return <div>Wallet not found</div>;
+    return <NotFound title="Wallet not found" />;
   }
 
   return (

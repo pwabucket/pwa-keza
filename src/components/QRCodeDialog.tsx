@@ -31,13 +31,14 @@ export default function QRCodeDialog({
         {content}
       </p>
 
-      {/* QR Code */}
-      <div className="mx-auto p-2.5 rounded-lg bg-white">
+      {/* QR Code, scaled down to fit narrow dialogs */}
+      <div className="mx-auto w-full max-w-53 p-2.5 rounded-lg bg-white">
         <QRCodeSVG
           value={content}
           title={title}
           level={"M"}
           size={192}
+          className="block w-full h-auto"
           imageSettings={{
             src: AppIcon,
             x: undefined,

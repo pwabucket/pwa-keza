@@ -76,7 +76,8 @@ export default function DownloadDialog({
         <Dialog.Title
           className={cn(
             "inline-flex items-center justify-center gap-2",
-            "font-monoton text-center text-2xl"
+            "text-center text-2xl font-bold",
+            "sm:font-monoton sm:font-normal"
           )}
         >
           Download

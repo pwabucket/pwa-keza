@@ -37,6 +37,19 @@
     [&::-webkit-scrollbar-thumb]:bg-neutral-500;
   }
 
+  /* Dark form controls, scrollbars and no grey tap flash */
+  :root {
+    color-scheme: dark;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  /* 16px text keeps iOS from zooming into focused fields */
+  input,
+  select,
+  textarea {
+    @apply text-base;
+  }
+
   /* Set cursor to pointer for all buttons and elements with role="button" */
   button:not(:disabled),
   [role="button"]:not(:disabled) {
@@ -47,4 +60,9 @@
 /* Override injected styles */
 body {
   @apply font-sans text-sm bg-neutral-800 text-white;
+
+  /* Keep content clear of notches and the home indicator */
+  padding-left: env(safe-area-inset-left);
+  padding-right: env(safe-area-inset-right);
+  padding-bottom: env(safe-area-inset-bottom);
 }

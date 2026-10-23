@@ -15,6 +15,7 @@ export default memo(function Toggle({
           "inline-flex h-6 w-11 items-center",
           "dark:bg-neutral-600",
           "peer-checked:bg-yellow-500",
+          "peer-focus-visible:ring-3 peer-focus-visible:ring-yellow-300",
 
           // Before
           "peer-checked:before:translate-x-6 before:translate-x-1",

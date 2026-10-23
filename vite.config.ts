@@ -18,7 +18,7 @@ export default defineConfig(({ mode }) => {
       version(),
       wasm(),
       VitePWA({
-        registerType: "autoUpdate",
+        registerType: "prompt",
         workbox: {
           globPatterns: ["**/*.*"],
           maximumFileSizeToCacheInBytes: 5 * 1024 ** 2,
@@ -56,17 +56,20 @@ export default defineConfig(({ mode }) => {
             {
               src: "screenshot-mobile-1.jpg",
               sizes: "1080x1920",
-              type: "image/jpg",
+              type: "image/jpeg",
+              form_factor: "narrow",
             },
             {
               src: "screenshot-mobile-2.jpg",
               sizes: "1080x1920",
-              type: "image/jpg",
+              type: "image/jpeg",
+              form_factor: "narrow",
             },
             {
               src: "screenshot-mobile-3.jpg",
               sizes: "1080x1920",
-              type: "image/jpg",
+              type: "image/jpeg",
+              form_factor: "narrow",
             },
           ],
         },

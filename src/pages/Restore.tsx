@@ -2,6 +2,7 @@ import toast from "react-hot-toast";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
+import HeaderTitle from "../layouts/HeaderTitle";
 import InnerAppLayout from "../layouts/InnerAppLayout";
 import RestoreIcon from "../assets/images/restore.svg";
 import WalletList from "../components/WalletList";
@@ -65,10 +66,7 @@ export default function Restore() {
   return (
     <InnerAppLayout
       headerMiddleContent={
-        <div className="flex justify-center items-center gap-2">
-          <img src={RestoreIcon} className="size-8" />{" "}
-          <h1 className="font-bold">Restore Wallets</h1>
-        </div>
+        <HeaderTitle icon={RestoreIcon}>Restore Wallets</HeaderTitle>
       }
       className="gap-4"
     >
