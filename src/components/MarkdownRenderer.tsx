@@ -13,7 +13,7 @@ export default function MarkdownRender({ content }: { content: string }) {
       <Markdown
         components={{
           a: ({
-            node, // eslint-disable-line
+            node, // oxlint-disable-line no-unused-vars
             ...props
           }) => <a {...props} target="_blank" rel="noopener noreferrer" />,
         }}

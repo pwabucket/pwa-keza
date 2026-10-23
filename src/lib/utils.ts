@@ -7,7 +7,7 @@ import { twMerge } from "tailwind-merge";
 
 export function repeatComponent(component: React.ReactNode, times = 1) {
   return repeatElement(undefined, times).map((_, i) =>
-    createElement(Fragment, { key: i, children: component })
+    createElement(Fragment, { key: i }, component)
   );
 }
 

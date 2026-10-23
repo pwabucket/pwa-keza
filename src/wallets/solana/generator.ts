@@ -14,7 +14,7 @@ export type SolanaWalletGeneratorArguments = Parameters<
 >;
 
 export async function generateSolanaWallet(): Promise<SolanaWalletResult> {
-  const key = Keypair.generate();
+  const key = await Keypair.generate();
 
   return {
     [SolanaWallet.ADDRESS]: key.publicKey.toBase58(),

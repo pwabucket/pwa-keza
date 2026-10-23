@@ -18,7 +18,6 @@ export type WalletResult<T extends Record<string, string>> = Record<
 >;
 
 export interface GetParcelConfig {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   (wallets: Record<string, string>[], options?: Record<string, unknown>): any;
 }
 

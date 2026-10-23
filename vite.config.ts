@@ -1,7 +1,6 @@
 import process from "process";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import tailwindcss from "@tailwindcss/vite";
-import topLevelAwait from "vite-plugin-top-level-await";
 import version from "vite-plugin-package-version";
 import wasm from "vite-plugin-wasm";
 import { ViteEjsPlugin } from "vite-plugin-ejs";
@@ -18,7 +17,6 @@ export default defineConfig(({ mode }) => {
       /** Plugins */
       version(),
       wasm(),
-      topLevelAwait(),
       VitePWA({
         registerType: "autoUpdate",
         workbox: {
@@ -81,7 +79,7 @@ export default defineConfig(({ mode }) => {
     worker: {
       format: "es",
       plugins() {
-        return [wasm(), topLevelAwait()];
+        return [wasm()];
       },
     },
   };

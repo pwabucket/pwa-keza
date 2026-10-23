@@ -1,8 +1,9 @@
-onlyBuiltDependencies:
-  - '@stellar/stellar-sdk'
-  - '@swc/core'
-  - '@tailwindcss/oxide'
-  - bufferutil
-  - esbuild
-  - sharp
-  - utf-8-validate
+allowBuilds:
+  '@stellar/stellar-sdk': true
+  '@tailwindcss/oxide': true
+  bufferutil: true
+  esbuild: true
+  sharp: true
+  utf-8-validate: true
+minimumReleaseAgeExclude:
+  - '@pwabucket/pwa-router@0.0.25'

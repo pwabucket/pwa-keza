@@ -1,4 +1,4 @@
-import { Link } from "react-router";
+import { Link } from "@pwabucket/pwa-router";
 
 import AppContainer from "../layouts/AppContainer";
 import AppIcon from "../assets/images/icon.svg";

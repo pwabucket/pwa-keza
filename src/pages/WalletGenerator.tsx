@@ -1,4 +1,4 @@
-import { useParams } from "react-router";
+import { useParams } from "@pwabucket/pwa-router";
 import WalletsGenerator from "../components/WalletsGenerator";
 import wallets from "../wallets";
 import GeneratorContext from "../contexts/GeneratorContext";
