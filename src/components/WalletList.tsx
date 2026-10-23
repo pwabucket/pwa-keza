@@ -10,6 +10,7 @@ import { Dialog } from "radix-ui";
 import DownloadDialog from "./DownloadDialog";
 import type { GetParcelConfig } from "../types/wallet";
 import Input from "./Input";
+import { PARCEL_URL } from "../lib/parcel";
 import { ParcelDialog } from "./ParcelDialog";
 import ParcelIcon from "../assets/images/parcel-icon.svg";
 import { Virtuoso } from "react-virtuoso";
@@ -38,22 +39,28 @@ export default function WalletList({
   );
   const [showDownload, setShowDownload] = useLocationToggle("download-dialog");
 
-  const filteredWallets = useMemo(
-    () =>
-      search
-        ? wallets.filter((item) =>
-            Object.values(item).some((value) =>
-              value.toLowerCase().includes(search.toLowerCase()),
-            ),
-          )
-        : wallets,
-    [search, wallets],
+  /* Entries keep each wallet's position in the full list */
+  const entries = useMemo(
+    () => wallets.map((wallet, index) => ({ wallet, index })),
+    [wallets],
   );
+
+  const filteredEntries = useMemo(() => {
+    const query = search.toLowerCase();
+
+    return query
+      ? entries.filter(({ wallet }) =>
+          Object.values(wallet).some((value) =>
+            value.toLowerCase().includes(query),
+          ),
+        )
+      : entries;
+  }, [search, entries]);
 
   return (
     <>
       <div className="flex gap-2 sticky top-12 z-30 bg-neutral-800 p-4 -mx-4">
-        {getParcelConfig && (
+        {PARCEL_URL && getParcelConfig && (
           <Dialog.Root open={showParcel} onOpenChange={setShowParcel}>
             {/* Parcel Trigger */}
             <Dialog.Trigger
@@ -122,15 +129,15 @@ export default function WalletList({
         />
         <p className="text-center">
           <span className="font-bold">{search ? "Results" : "Wallets"}:</span>{" "}
-          {filteredWallets.length}
+          {filteredEntries.length}
         </p>
       </div>
 
       <div className="flex flex-col">
         <Virtuoso
           useWindowScroll
-          data={filteredWallets}
-          itemContent={(index, wallet) => (
+          data={filteredEntries}
+          itemContent={(_, { wallet, index }) => (
             <div className="pb-4">
               <WalletInfoContainer
                 title={`Wallet ${index + 1}`}

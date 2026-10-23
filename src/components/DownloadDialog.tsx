@@ -44,8 +44,6 @@ export default function DownloadDialog({
       }),
     });
 
-    console.log("Encrypting with Safe:", result);
-
     openSafe({
       filename: result.filename,
       type: "file",

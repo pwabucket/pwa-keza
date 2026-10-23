@@ -1,5 +1,4 @@
 import toast from "react-hot-toast";
-import { csv2json } from "json-2-csv";
 import { useCallback, useState } from "react";
 import { useDropzone } from "react-dropzone";
 
@@ -8,6 +7,7 @@ import RestoreIcon from "../assets/images/restore.svg";
 import WalletList from "../components/WalletList";
 import useWallets from "../hooks/useWallets";
 import { cn } from "../lib/utils";
+import { parseBackup } from "../lib/backup";
 import type { WalletModule } from "../types/wallet";
 
 import generators from "../wallets";
@@ -16,50 +16,37 @@ export default function Restore() {
   const { wallets, expanded, setWallets, setExpanded } = useWallets();
   const [module, setModule] = useState<WalletModule | null>(null);
   const onDrop = useCallback(
-    (acceptedFiles: File[]) => {
+    async (acceptedFiles: File[]) => {
       const file = acceptedFiles[0];
-      const reader = new FileReader();
 
-      reader.addEventListener("load", (e) => {
-        try {
-          if (file.type === "text/csv") {
-            const data = csv2json(e.target?.result as string, {
-              trimHeaderFields: true,
-              trimFieldValues: true,
-            }) as Record<string, string>[];
+      if (!file) {
+        toast.error("Choose a .json, .txt or .csv backup file.", {
+          id: "restore",
+        });
+        return;
+      }
 
-            setWallets(data);
-          } else {
-            const data = JSON.parse(e.target?.result as string) as Record<
-              string,
-              string
-            >[];
+      try {
+        setWallets(parseBackup(file.name, await file.text()));
+      } catch {
+        toast.error("Invalid Backup file!", { id: "restore" });
+        return;
+      }
 
-            setWallets(data);
-          }
+      /* Detect module from file name */
+      const moduleId = file.name.replace("keza-", "").split("-wallet")[0];
 
-          /* Detect module from file name */
-          const moduleId = file.name.replace("keza-", "").split("-wallet")[0];
-
-          /* Debug log */
-          console.log("Detected module ID:", moduleId);
-
-          /* Find module */
-          const detectedModule = generators.find((mod) => {
-            return mod.id === moduleId;
-          });
-
-          if (detectedModule) {
-            setModule(detectedModule);
-            setExpanded(detectedModule.defaultExpanded ?? false);
-          } else {
-            setModule(null);
-          }
-        } catch {
-          toast.error("Invalid Backup file!");
-        }
+      /* Find module */
+      const detectedModule = generators.find((mod) => {
+        return mod.id === moduleId;
       });
-      reader.readAsText(file);
+
+      if (detectedModule) {
+        setModule(detectedModule);
+        setExpanded(detectedModule.defaultExpanded ?? false);
+      } else {
+        setModule(null);
+      }
     },
     [setWallets, setExpanded]
   );

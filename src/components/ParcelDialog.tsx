@@ -4,29 +4,33 @@ import { HiOutlineXMark } from "react-icons/hi2";
 import ParcelIcon from "../assets/images/parcel-icon.svg";
 import { PopupDialog } from "./PopupDialog";
 import { cn } from "../lib/utils";
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { useLocationIndexUpdater } from "@pwabucket/pwa-router";
-
-/** Parcel URL from Environment Variables */
-const PARCEL_URL = import.meta.env.VITE_PARCEL_URL;
+import { PARCEL_URL } from "../lib/parcel";
 
 interface ParcelDialogProps {
+  parcelUrl: URL;
   wallets: Record<string, string>[];
   getParcelConfig: GetParcelConfig;
 }
 
-const ParcelApp = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
+const ParcelApp = ({
+  parcelUrl,
+  wallets,
+  getParcelConfig,
+}: ParcelDialogProps) => {
+  const iframeRef = useRef<HTMLIFrameElement>(null);
+
   useLocationIndexUpdater("parcel");
   useEffect(() => {
     /** Handle Parcel Ready Message */
     function handleParcelReady(event: MessageEvent) {
-      if (event.origin !== new URL(PARCEL_URL).origin) return;
+      if (event.origin !== parcelUrl.origin) return;
+      if (event.source !== iframeRef.current?.contentWindow) return;
       if (event.data === "ready") {
-        const data = getParcelConfig(wallets);
-
-        console.log("Sending data to Parcel:", data);
-
-        event.source!.postMessage(data, { targetOrigin: event.origin });
+        event.source!.postMessage(getParcelConfig(wallets), {
+          targetOrigin: event.origin,
+        });
       }
     }
 
@@ -36,11 +40,12 @@ const ParcelApp = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
     return () => {
       window.removeEventListener("message", handleParcelReady);
     };
-  }, [getParcelConfig, wallets]);
+  }, [parcelUrl, getParcelConfig, wallets]);
 
   return (
     <iframe
-      src={new URL("/", PARCEL_URL).href}
+      ref={iframeRef}
+      src={new URL("/", parcelUrl).href}
       title="Parcel"
       className="border-0 grow"
     />
@@ -48,7 +53,12 @@ const ParcelApp = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
 };
 
 /** Parcel Dialog Component */
-const ParcelDialog = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
+const ParcelDialog = ({
+  wallets,
+  getParcelConfig,
+}: Omit<ParcelDialogProps, "parcelUrl">) => {
+  if (!PARCEL_URL) return null;
+
   return (
     <PopupDialog className="p-0 h-full max-h-192 overflow-hidden gap-0 max-w-md">
       {/* Header */}
@@ -81,7 +91,11 @@ const ParcelDialog = ({ wallets, getParcelConfig }: ParcelDialogProps) => {
         </div>
       </div>
 
-      <ParcelApp wallets={wallets} getParcelConfig={getParcelConfig} />
+      <ParcelApp
+        parcelUrl={PARCEL_URL}
+        wallets={wallets}
+        getParcelConfig={getParcelConfig}
+      />
     </PopupDialog>
   );
 };
